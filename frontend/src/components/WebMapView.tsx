@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { loadModules } from "esri-loader"; // https://github.com/Esri/esri-loader
 import "./WebMapView.css";
 import axios from "axios";
+import { CChart } from "@coreui/react-chartjs"; // https://coreui.io/react/docs/components/chart/
 
 type Point = {
   latitude: number;
@@ -18,7 +19,7 @@ const initialData: Welcome = {
   timezone_abbreviation: "CEST",
   hourly: {
     time: ["2022-07-01T00:00", "2022-07-01T01:00", "2022-07-01T02:00"],
-    temperature_2m: [13, 12.7, 12.7, 12.5, 12.5, 12.8, 13, 12.9, 13.3],
+    temperature_2m: [13, 12.7, 12.7],
   },
   hourly_units: {
     temperature_2m: "°C",
@@ -84,7 +85,7 @@ export const WebMapView: React.FC = () => {
 
       try {
         const response = await axios.get(
-          `https://api.open-meteo.com/v1/forecast?latitude=${point.latitude}&longitude=${point.longitude}&hourly=temperature_2m`
+          `https://api.open-meteo.com/v1/forecast?latitude=${point.latitude}&longitude=${point.longitude}&hourly=temperature_2m&current_weather=true`
         );
         const resData = response?.data;
         setData(resData);
@@ -202,7 +203,27 @@ export const WebMapView: React.FC = () => {
       <div id="viewDiv"></div>
       <div id="timeSlider"></div>
       <div id="titleDiv" className="esri-widget">
-        <div id="titleText">Precipitation forecast for next 72 hours</div>
+        <div>timezone:{data["timezone"]}</div>
+        <div>current time:{data["current_weather"]["time"]}</div>
+        <div>current temperature:{data["current_weather"]["temperature"]}</div>
+        <div id="titleText">
+          <CChart
+            type="line"
+            data={{
+              labels: data["hourly"]["time"],
+              datasets: [
+                {
+                  label: "hourly temperature",
+                  backgroundColor: "rgba(151, 187, 205, 0.2)",
+                  borderColor: "rgba(151, 187, 205, 1)",
+                  pointBackgroundColor: "rgba(151, 187, 205, 1)",
+                  pointBorderColor: "#fff",
+                  data: data["hourly"]["temperature_2m"],
+                },
+              ],
+            }}
+          />
+        </div>
       </div>
     </>
   );
