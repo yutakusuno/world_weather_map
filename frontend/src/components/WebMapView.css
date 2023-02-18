@@ -5,16 +5,10 @@
   width: 100vw;
 }
 
-#timeSlider {
-  position: absolute;
-  left: 5%;
-  right: 5%;
-  bottom: 20px;
-}
-
 #titleDiv {
-  padding: 10px;
-  font-weight: 36;
   text-align: center;
-  width: 100vh;
+  left: 1%;
+  right: 1%;
+  position: absolute;
+  bottom: 20px;
 }
