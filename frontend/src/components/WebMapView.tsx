@@ -148,15 +148,46 @@ export const WebMapView: React.FC = () => {
     }
   };
 
+  const delay = (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
+
+  const cleanTimeSlider = (first: boolean = false) => {
+    const timeSlider = document.getElementById("timeSlider");
+    if (timeSlider !== null && timeSlider.hasChildNodes()) {
+      const timeSliderCount = timeSlider.childElementCount;
+      let n = first ? 0 : 1;
+      while (timeSlider.firstChild && n < timeSliderCount) {
+        n++;
+        timeSlider.removeChild(timeSlider.firstChild);
+      }
+    }
+  };
+
   // Initialize ArcGIS Map
   useEffect(() => {
     // first lazy-load the esri classes
-    loadModules(["esri/Map", "esri/views/MapView"], {
-      css: true,
-    }).then(([Map, MapView]) => {
+    loadModules(
+      [
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/FeatureLayer",
+        "esri/widgets/TimeSlider",
+        "esri/widgets/Expand",
+        "esri/widgets/Legend",
+      ],
+      {
+        css: true,
+      }
+    ).then(([Map, MapView, FeatureLayer, TimeSlider, Expand, Legend]) => {
+      const layer = new FeatureLayer({
+        url: "https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/NDFD_Precipitation_v1/FeatureServer/0",
+      });
+
       // create the Map
       const map = new Map({
         basemap: "hybrid",
+        layers: [layer],
       });
 
       // create the MapView
@@ -165,6 +196,41 @@ export const WebMapView: React.FC = () => {
         map: map,
         center: [-100, 30],
         zoom: 4,
+      });
+
+      const legend = new Legend({
+        view: mapView,
+      });
+
+      const legendExpand = new Expand({
+        expandIconClass: "esri-icon-legend",
+        expandTooltip: "Legend",
+        view: mapView,
+        content: legend,
+        expanded: false,
+      });
+
+      mapView.ui.add(legendExpand, "top-left");
+
+      mapView.whenLayerView(layer).then((lv: any) => {
+        // Prevent duplicate display of TimeSlider by StrictMode
+        (async () => {
+          cleanTimeSlider(true);
+
+          new TimeSlider({
+            container: "timeSlider",
+            view: mapView,
+            timeVisible: true, // show the time stamps on the timeslider
+            loop: false,
+            fullTimeExtent: layer.timeInfo.fullTimeExtent.expandTo("hours"),
+            stop: {
+              interval: layer.timeInfo.interval,
+            },
+          });
+
+          await delay(300);
+          cleanTimeSlider();
+        })();
       });
 
       mapView.on("click", (event: any) => {
@@ -222,10 +288,11 @@ export const WebMapView: React.FC = () => {
   return (
     <>
       <div id="viewDiv"></div>
-      <div id="titleDiv" className="esri-widget">
-        <div id="titleText">
+      <div id="footerDiv" className="esri-widget">
+        <div id="timeSlider"></div>
+        <div id="lineChart">
           <Line
-            height={40}
+            height={50}
             data={{
               labels: displayData["hourlyTime"],
               datasets: [
