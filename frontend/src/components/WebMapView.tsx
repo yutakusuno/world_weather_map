@@ -2,7 +2,27 @@ import React, { useEffect, useState } from "react";
 import { loadModules } from "esri-loader"; // https://github.com/Esri/esri-loader
 import "./WebMapView.css";
 import axios from "axios";
-import { CChart } from "@coreui/react-chartjs"; // https://coreui.io/react/docs/components/chart/
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 type Point = {
   latitude: number;
@@ -18,8 +38,14 @@ const initialData: OpenMeteoObject = {
   timezone: "Europe/Berlin",
   timezone_abbreviation: "CEST",
   hourly: {
-    time: ["2022-01-01T00:00", "2022-0`-01T01:00", "2022-01-01T02:00"],
-    temperature_2m: [0, 10, 20],
+    time: [
+      "2022-01-01T00:00",
+      "2022-01-01T01:00",
+      "2022-01-01T02:00",
+      "2022-01-01T03:00",
+      "2022-01-01T04:00",
+    ],
+    temperature_2m: [0, 10, 20, 10, 0],
   },
   hourly_units: {
     temperature_2m: "°C",
@@ -65,6 +91,7 @@ interface HourlyUnits {
 
 type displayDataType = {
   time: string;
+  unit: string;
   temperature: number;
   timezone: string;
   hourlyTime: string[];
@@ -72,11 +99,12 @@ type displayDataType = {
 };
 
 const initialDisplayData: displayDataType = {
-  timezone: "Europe/Berlin",
-  hourlyTime: ["2022-01-01T00:00", "2022-0`-01T01:00", "2022-01-01T02:00"],
-  hourlyTemperature: [0, 10, 20],
-  time: "2022-01-01T00:00",
-  temperature: 13.3,
+  timezone: "",
+  unit: "",
+  hourlyTime: [],
+  hourlyTemperature: [],
+  time: "",
+  temperature: 0,
 };
 
 export const WebMapView: React.FC = () => {
@@ -157,25 +185,28 @@ export const WebMapView: React.FC = () => {
   }, [searching]);
 
   const processingData = (data: OpenMeteoObject) => {
-    const time = data["current_weather"]["time"];
-    let boolArr: boolean[] = new Array(true);
+    const limit: number = 72; // display data up to 72 hours
+    const currentTime = data["current_weather"]["time"];
+    let validHourlyTimeIndexes: boolean[] = new Array(false);
 
-    const hourlyTime = data["hourly"]["time"].filter(
-      (val: string, idx: number) => {
-        const bool = new Date(time).getTime() <= new Date(val).getTime();
-        boolArr[idx] = bool;
+    // collect data after current time
+    const hourlyTime = data["hourly"]["time"]
+      .filter((val: string, idx: number) => {
+        const bool = new Date(currentTime).getTime() <= new Date(val).getTime();
+        validHourlyTimeIndexes[idx] = bool;
         return bool;
-      }
-    );
+      })
+      .slice(0, limit);
 
-    const hourlyTemperature = data["hourly"]["temperature_2m"].filter(
-      (val: number, idx: number) => {
-        return boolArr[idx];
-      }
-    );
+    const hourlyTemperature = data["hourly"]["temperature_2m"]
+      .filter((val: number, idx: number) => {
+        return validHourlyTimeIndexes[idx];
+      })
+      .slice(0, limit);
 
     setDisplayData({
-      time: time,
+      time: currentTime,
+      unit: data["hourly_units"]["temperature_2m"],
       temperature: data["current_weather"]["temperature"],
       timezone: data["timezone"],
       hourlyTime: hourlyTime,
@@ -192,19 +223,14 @@ export const WebMapView: React.FC = () => {
     <>
       <div id="viewDiv"></div>
       <div id="titleDiv" className="esri-widget">
-        <div>
-          current time:{displayData["time"]} / temperature:{" "}
-          {displayData["temperature"]} / timezone:{displayData["timezone"]} /{" "}
-        </div>
         <div id="titleText">
-          <CChart
-            type="line"
+          <Line
             height={40}
             data={{
               labels: displayData["hourlyTime"],
               datasets: [
                 {
-                  label: "hourly temperature",
+                  label: `hourly temperature ${displayData["unit"]} / timezone ${displayData["timezone"]}`,
                   backgroundColor: "rgba(151, 187, 205, 0.2)",
                   borderColor: "rgba(151, 187, 205, 1)",
                   pointBackgroundColor: "rgba(151, 187, 205, 1)",
