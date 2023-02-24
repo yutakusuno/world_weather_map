@@ -45,7 +45,7 @@ const initialData: OpenMeteoObject = {
       "2022-01-01T03:00",
       "2022-01-01T04:00",
     ],
-    temperature_2m: [0, 10, 20, 10, 0],
+    temperature_2m: [10, 5, 20, 15, 10],
   },
   hourly_units: {
     temperature_2m: "°C",
@@ -194,7 +194,7 @@ export const WebMapView: React.FC = () => {
       const mapView = new MapView({
         container: "viewDiv",
         map: map,
-        center: [-100, 30],
+        center: [-80, 30],
         zoom: 4,
       });
 
@@ -211,6 +211,7 @@ export const WebMapView: React.FC = () => {
       });
 
       mapView.ui.add(legendExpand, "top-left");
+      mapView.ui.add("lineChart", "top-right");
 
       mapView.whenLayerView(layer).then((lv: any) => {
         // Prevent duplicate display of TimeSlider by StrictMode
@@ -286,29 +287,55 @@ export const WebMapView: React.FC = () => {
   }, [data]);
 
   return (
-    <>
-      <div id="viewDiv"></div>
-      <div id="footerDiv" className="esri-widget">
-        <div id="timeSlider"></div>
-        <div id="lineChart">
-          <Line
-            height={50}
-            data={{
-              labels: displayData["hourlyTime"],
-              datasets: [
-                {
-                  label: `hourly temperature ${displayData["unit"]} / timezone ${displayData["timezone"]}`,
-                  backgroundColor: "rgba(151, 187, 205, 0.2)",
-                  borderColor: "rgba(151, 187, 205, 1)",
-                  pointBackgroundColor: "rgba(151, 187, 205, 1)",
-                  pointBorderColor: "#fff",
-                  data: displayData["hourlyTemperature"],
+    <div id="viewDiv">
+      <div id="lineChart">
+        <Line
+          height={150}
+          width={100}
+          data={{
+            labels: displayData["hourlyTime"],
+            datasets: [
+              {
+                label: `hourly temperature ${displayData["unit"]} / timezone ${displayData["timezone"]}`,
+                backgroundColor: "#ffffff",
+                borderColor: "#ffffff",
+                pointBackgroundColor: "#ffffff",
+                pointBorderColor: "#ffffff",
+                data: displayData["hourlyTemperature"],
+              },
+            ],
+          }}
+          options={{
+            indexAxis: "y",
+            plugins: {
+              // https://www.chartjs.org/docs/master/configuration/legend.html
+              legend: {
+                labels: {
+                  color: "#fff",
+                  font: {
+                    size: 15, // px
+                  },
                 },
-              ],
-            }}
-          />
-        </div>
+              },
+            },
+            scales: {
+              x: {
+                ticks: {
+                  color: "#ffffff",
+                },
+              },
+              y: {
+                ticks: {
+                  color: "#ffffff",
+                },
+              },
+            },
+          }}
+        />
       </div>
-    </>
+      <div id="footerDiv" className="esri-widget">
+        <div id="timeSlider" />
+      </div>
+    </div>
   );
 };
