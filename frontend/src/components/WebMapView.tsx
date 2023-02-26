@@ -5,6 +5,7 @@ import {
   initDisplayData,
   initResData,
   openMeteoApiCall,
+  processingData,
 } from "./WeatherForecast";
 import type { displayData, resData, Point } from "./WeatherForecast";
 
@@ -34,59 +35,12 @@ export const WebMapView: React.FC = () => {
   const [resData, setResData] = useState<resData>(initResData);
   const [displayData, setDisplayData] = useState<displayData>(initDisplayData);
 
-  const delay = (ms: number) => {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  };
-
-  const cleanTimeSlider = (first: boolean = false) => {
-    const timeSlider = document.getElementById("timeSlider");
-    if (timeSlider !== null && timeSlider.hasChildNodes()) {
-      const timeSliderCount = timeSlider.childElementCount;
-      let n = first ? 0 : 1;
-      while (timeSlider.firstChild && n < timeSliderCount) {
-        n++;
-        timeSlider.removeChild(timeSlider.firstChild);
-      }
-    }
-  };
-
   const getWeatherData = async (point: Point) => {
     const data = openMeteoApiCall({
       latitude: point.latitude,
       longitude: point.longitude,
     });
     setResData(await data);
-  };
-
-  const processingData = (data: resData) => {
-    console.log("resData", data);
-    const limit: number = 72; // display data up to 72 hours
-    const currentTime = data["current_weather"]["time"];
-    let validHourlyTimeIndies: boolean[] = new Array(false);
-
-    // collect data after current time
-    const hourlyTime = data["hourly"]["time"]
-      .filter((val: string, idx: number) => {
-        const bool = new Date(currentTime).getTime() <= new Date(val).getTime();
-        validHourlyTimeIndies[idx] = bool;
-        return bool;
-      })
-      .slice(0, limit);
-
-    const hourlyTemperature = data["hourly"]["temperature_2m"]
-      .filter((val: number, idx: number) => {
-        return validHourlyTimeIndies[idx];
-      })
-      .slice(0, limit);
-
-    setDisplayData({
-      time: currentTime,
-      unit: data["hourly_units"]["temperature_2m"],
-      temperature: data["current_weather"]["temperature"],
-      timezone: data["timezone"],
-      hourlyTime: hourlyTime,
-      hourlyTemperature: hourlyTemperature,
-    });
   };
 
   // Initialize ArcGIS Map
@@ -104,15 +58,10 @@ export const WebMapView: React.FC = () => {
       {
         css: true,
       }
-    ).then(([Map, MapView, FeatureLayer, TimeSlider, Expand, Legend]) => {
-      const layer = new FeatureLayer({
-        url: "https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/NDFD_Precipitation_v1/FeatureServer/0",
-      });
-
+    ).then(([Map, MapView]) => {
       // create the Map
       const map = new Map({
         basemap: "hybrid",
-        layers: [layer],
       });
 
       // create the MapView
@@ -121,41 +70,6 @@ export const WebMapView: React.FC = () => {
         map: map,
         center: [-80, 30],
         zoom: 4,
-      });
-
-      const legend = new Legend({
-        view: mapView,
-      });
-
-      const legendExpand = new Expand({
-        expandIconClass: "esri-icon-legend",
-        expandTooltip: "Legend",
-        view: mapView,
-        content: legend,
-        expanded: false,
-      });
-
-      mapView.ui.add(legendExpand, "top-left");
-      mapView.ui.add("lineChart", "top-right");
-
-      mapView.whenLayerView(layer).then((lv: any) => {
-        // Prevent duplicate display of TimeSlider by StrictMode
-        cleanTimeSlider(true);
-        (async () => {
-          new TimeSlider({
-            container: "timeSlider",
-            view: mapView,
-            timeVisible: true, // show the time stamps on the timeslider
-            loop: false,
-            fullTimeExtent: layer.timeInfo.fullTimeExtent.expandTo("hours"),
-            stop: {
-              interval: layer.timeInfo.interval,
-            },
-          });
-
-          await delay(300);
-          cleanTimeSlider();
-        })();
       });
 
       mapView.on("click", (event: any) => {
@@ -174,37 +88,61 @@ export const WebMapView: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    processingData(resData);
+    const data: displayData = { ...processingData(resData) };
+    setDisplayData(data);
   }, [resData]);
 
   return (
     <div id="viewDiv">
-      <div id="lineChart">
+      <div id="lineChart" className="esri-widget">
         <Line
-          height={150}
-          width={100}
+          height={120}
+          width={600}
           data={{
             labels: displayData["hourlyTime"],
             datasets: [
               {
                 label: `hourly temperature ${displayData["unit"]} / timezone ${displayData["timezone"]}`,
-                backgroundColor: "#ffffff",
-                borderColor: "#ffffff",
-                pointBackgroundColor: "#ffffff",
-                pointBorderColor: "#ffffff",
+                backgroundColor: "#0d0101",
+                borderColor: "#0d0101",
+                pointBackgroundColor: "#0d0101",
+                pointBorderColor: "#0d0101",
                 data: displayData["hourlyTemperature"],
+              },
+              {
+                label: `hourlyRelativeHumidity ${displayData["unit"]}`,
+                backgroundColor: "#0d0101",
+                borderColor: "#0d0101",
+                pointBackgroundColor: "#0d0101",
+                pointBorderColor: "#0d0101",
+                data: displayData["hourlyRelativeHumidity"],
+              },
+              {
+                label: `hourlyPrecipitationProbability ${displayData["unit"]}`,
+                backgroundColor: "#0d0101",
+                borderColor: "#0d0101",
+                pointBackgroundColor: "#0d0101",
+                pointBorderColor: "#0d0101",
+                data: displayData["hourlyPrecipitationProbability"],
+              },
+              {
+                label: `hourlyWeatherCode ${displayData["unit"]}`,
+                backgroundColor: "#0d0101",
+                borderColor: "#0d0101",
+                pointBackgroundColor: "#0d0101",
+                pointBorderColor: "#0d0101",
+                data: displayData["hourlyWeatherCode"],
               },
             ],
           }}
           options={{
-            indexAxis: "y",
             plugins: {
               // https://www.chartjs.org/docs/master/configuration/legend.html
               legend: {
                 labels: {
-                  color: "#fff",
+                  color: "#0d0101",
                   font: {
-                    size: 15, // px
+                    size: 15,
                     weight: "bold",
                   },
                 },
@@ -213,18 +151,18 @@ export const WebMapView: React.FC = () => {
             scales: {
               x: {
                 ticks: {
-                  color: "#ffffff",
+                  color: "#0d0101",
                   font: {
-                    size: 15, // px
+                    size: 15,
                     weight: "bold",
                   },
                 },
               },
               y: {
                 ticks: {
-                  color: "#ffffff",
+                  color: "#0d0101",
                   font: {
-                    size: 15, // px
+                    size: 15,
                     weight: "bold",
                   },
                 },
@@ -232,9 +170,6 @@ export const WebMapView: React.FC = () => {
             },
           }}
         />
-      </div>
-      <div id="footerDiv" className="esri-widget">
-        <div id="timeSlider" />
       </div>
     </div>
   );

@@ -1,5 +1,4 @@
 #viewDiv {
-  position: relative;
   padding: 0;
   margin: 0;
   height: 100vh;
@@ -7,18 +6,10 @@
 }
 
 #lineChart {
-  position: absolute;
-  text-align: center;
-  right: 1%;
-  height: 80vh;
-  width: 30vw;
-}
-
-#footerDiv {
-  position: absolute;
-  text-align: center;
-  left: 1%;
-  right: 1%;
-  height: 13vh;
-  bottom: 20px;
+  position: fixed;
+  height: 40vh;
+  width: 100vw;
+  left: 3px;
+  right: 3px;
+  bottom: 18px;
 }
