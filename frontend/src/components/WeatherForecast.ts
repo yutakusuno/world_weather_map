@@ -5,31 +5,7 @@ export type Point = {
   longitude: number;
 };
 
-export const initDisplayData: displayData = {
-  temperature: 0,
-  time: "",
-  timezone: "",
-  unit: "",
-  hourlyTime: [],
-  hourlyTemperature: [],
-  hourlyRelativeHumidity: [],
-  hourlyPrecipitationProbability: [],
-  hourlyWeatherCode: [],
-};
-
-export type displayData = {
-  temperature: number;
-  time: string;
-  timezone: string;
-  unit: string;
-  hourlyTime: string[];
-  hourlyTemperature: number[];
-  hourlyRelativeHumidity: number[];
-  hourlyPrecipitationProbability: number[];
-  hourlyWeatherCode: number[];
-};
-
-export const initResData: resData = {
+export const initResData: ResData = {
   latitude: 52.52,
   longitude: 13.419,
   elevation: 44.812,
@@ -66,7 +42,7 @@ export const initResData: resData = {
   },
 };
 
-export interface resData {
+export interface ResData {
   latitude: number;
   longitude: number;
   elevation: number;
@@ -125,56 +101,139 @@ export const openMeteoApiCall = async (point: Point) => {
   }
 };
 
-export const processingData = (data: resData) => {
+const dayOfStr = (day: number) => {
+  return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][day] || "";
+};
+
+const monthOfStr = (day: number) => {
+  return (
+    [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ][day] || ""
+  );
+};
+
+export type DisplayData = {
+  hourlyTime: string[];
+  hourlyTemperature: number[];
+  hourlyRelativeHumidity: number[];
+  hourlyPrecipitationProbability: number[];
+  hourlyWeatherCode: number[];
+};
+
+export const initDisplayData: DisplayData = {
+  hourlyTime: [],
+  hourlyTemperature: [],
+  hourlyRelativeHumidity: [],
+  hourlyPrecipitationProbability: [],
+  hourlyWeatherCode: [],
+};
+
+// prepare current data,in addition to daily data
+// type DailyData = {
+//   hourlyTime: [];
+//   hourlyTemperature: [];
+//   hourlyRelativeHumidity: [];
+//   hourlyPrecipitationProbability: [];
+//   hourlyWeatherCode: [];
+// };
+
+export const processingData = (data: ResData) => {
   console.log("resData", data);
-  const limit: number = 72; // display data up to 72 hours
-  const currentTime = data["current_weather"]["time"];
-  let validHourlyTimeIndies: boolean[] = new Array(false);
 
-  // collect data after current time
-  const hourlyTime = data["hourly"]["time"]
-    .filter((val: string, idx: number) => {
-      const bool = new Date(currentTime).getTime() <= new Date(val).getTime();
-      validHourlyTimeIndies[idx] = bool;
-      return bool;
+  let dailyIndies: { [key: string]: number } = {};
+  let dailyData: { [key: string]: DisplayData } = {};
+
+  let date: number = 99;
+  let month: number = 99;
+  let day: number = 99;
+
+  // make the associative array for collecting daily data
+  data["hourly"]["time"].forEach((val, idx, _) => {
+    const dateAndTime = new Date(val);
+    if (day !== dateAndTime.getDay()) day = dateAndTime.getDay();
+    if (date !== dateAndTime.getDate()) date = dateAndTime.getDate();
+    if (month !== dateAndTime.getMonth()) month = dateAndTime.getMonth();
+
+    const monthDate = `${dayOfStr(day)}, ${date} ${monthOfStr(month)}`;
+    if (dailyData[monthDate] === undefined)
+      // TODO when use initDisplayData here, the dailyData breaks
+      dailyData[monthDate] = {
+        hourlyTime: [],
+        hourlyTemperature: [],
+        hourlyRelativeHumidity: [],
+        hourlyPrecipitationProbability: [],
+        hourlyWeatherCode: [],
+      };
+    dailyData[monthDate]["hourlyTime"].push(
+      dateAndTime.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    );
+
+    dailyIndies[monthDate] = idx;
+  });
+
+  // flags to specify daily data
+  const monthDateList = Object.keys(dailyIndies);
+  const lastIndexEachMonthDate = Object.values(dailyIndies);
+
+  let lastIndex: number = 0;
+  lastIndexEachMonthDate
+    .map((val, idx) => {
+      const start = idx === 0 ? idx : lastIndex;
+      lastIndex = val;
+      return data["hourly"]["temperature_2m"].slice(start, val);
     })
-    .slice(0, limit);
+    .forEach(
+      (val, idx, _) =>
+        (dailyData[monthDateList[idx]]["hourlyTemperature"] = val)
+    );
 
-  const hourlyTemperature = data["hourly"]["temperature_2m"]
-    .filter((val: number, idx: number) => {
-      return validHourlyTimeIndies[idx];
+  lastIndexEachMonthDate
+    .map((val, idx) => {
+      const start = idx === 0 ? idx : lastIndex;
+      lastIndex = val;
+      return data["hourly"]["relativehumidity_2m"].slice(start, val);
     })
-    .slice(0, limit);
+    .forEach(
+      (val, idx, _) =>
+        (dailyData[monthDateList[idx]]["hourlyRelativeHumidity"] = val)
+    );
 
-  const hourlyRelativeHumidity = data["hourly"]["relativehumidity_2m"]
-    .filter((val: number, idx: number) => {
-      return validHourlyTimeIndies[idx];
+  lastIndexEachMonthDate
+    .map((val, idx) => {
+      const start = idx === 0 ? idx : lastIndex;
+      lastIndex = val;
+      return data["hourly"]["precipitation_probability"].slice(start, val);
     })
-    .slice(0, limit);
+    .forEach(
+      (val, idx, _) =>
+        (dailyData[monthDateList[idx]]["hourlyPrecipitationProbability"] = val)
+    );
 
-  const hourlyPrecipitationProbability = data["hourly"][
-    "precipitation_probability"
-  ]
-    .filter((val: number, idx: number) => {
-      return validHourlyTimeIndies[idx];
+  lastIndexEachMonthDate
+    .map((val, idx) => {
+      const start = idx === 0 ? idx : lastIndex;
+      lastIndex = val;
+      return data["hourly"]["weathercode"].slice(start, val);
     })
-    .slice(0, limit);
+    .forEach(
+      (val, idx, _) =>
+        (dailyData[monthDateList[idx]]["hourlyWeatherCode"] = val)
+    );
 
-  const hourlyWeatherCode = data["hourly"]["weathercode"]
-    .filter((val: number, idx: number) => {
-      return validHourlyTimeIndies[idx];
-    })
-    .slice(0, limit);
-
-  return {
-    temperature: data["current_weather"]["temperature"],
-    time: currentTime,
-    timezone: data["timezone"],
-    unit: data["hourly_units"]["temperature_2m"],
-    hourlyTime: hourlyTime,
-    hourlyTemperature: hourlyTemperature,
-    hourlyRelativeHumidity: hourlyRelativeHumidity,
-    hourlyPrecipitationProbability: hourlyPrecipitationProbability,
-    hourlyWeatherCode: hourlyWeatherCode,
-  };
+  return dailyData;
 };

@@ -7,7 +7,7 @@ import {
   openMeteoApiCall,
   processingData,
 } from "./WeatherForecast";
-import type { displayData, resData, Point } from "./WeatherForecast";
+import type { ResData, Point, DisplayData } from "./WeatherForecast";
 
 import {
   Chart as ChartJS,
@@ -32,8 +32,11 @@ ChartJS.register(
 );
 
 export const WebMapView: React.FC = () => {
-  const [resData, setResData] = useState<resData>(initResData);
-  const [displayData, setDisplayData] = useState<displayData>(initDisplayData);
+  const [resData, setResData] = useState<ResData>(initResData);
+  const [processedData, setProcessedData] = useState<{
+    [key: string]: DisplayData;
+  }>();
+  const [displayData, setDisplayData] = useState<DisplayData>(initDisplayData);
 
   const getWeatherData = async (point: Point) => {
     const data = openMeteoApiCall({
@@ -88,13 +91,33 @@ export const WebMapView: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const data: displayData = { ...processingData(resData) };
-    setDisplayData(data);
+    const data: { [key: string]: DisplayData } = { ...processingData(resData) };
+    setProcessedData(data);
   }, [resData]);
+
+  useEffect(() => {
+    console.log("processedData", processedData);
+    if (processedData) setDisplayData(Object.values(processedData)[0]);
+  }, [processedData]);
+
+  const handleClick = (idx: number) => {
+    if (processedData) setDisplayData(Object.values(processedData)[idx]);
+  };
 
   return (
     <div id="viewDiv">
       <div id="lineChart" className="esri-widget">
+        <div>
+          {processedData
+            ? Object.keys(processedData).map((val, idx) => {
+                return (
+                  <button onClick={() => handleClick(idx)} key={idx}>
+                    {val}
+                  </button>
+                );
+              })
+            : ""}
+        </div>
         <Line
           height={120}
           width={600}
@@ -102,7 +125,7 @@ export const WebMapView: React.FC = () => {
             labels: displayData["hourlyTime"],
             datasets: [
               {
-                label: `hourly temperature ${displayData["unit"]} / timezone ${displayData["timezone"]}`,
+                label: `hourly temperature / timezone`,
                 backgroundColor: "#0d0101",
                 borderColor: "#0d0101",
                 pointBackgroundColor: "#0d0101",
@@ -110,7 +133,7 @@ export const WebMapView: React.FC = () => {
                 data: displayData["hourlyTemperature"],
               },
               {
-                label: `hourlyRelativeHumidity ${displayData["unit"]}`,
+                label: `hourlyRelativeHumidity`,
                 backgroundColor: "#0d0101",
                 borderColor: "#0d0101",
                 pointBackgroundColor: "#0d0101",
@@ -118,7 +141,7 @@ export const WebMapView: React.FC = () => {
                 data: displayData["hourlyRelativeHumidity"],
               },
               {
-                label: `hourlyPrecipitationProbability ${displayData["unit"]}`,
+                label: `hourlyPrecipitationProbability`,
                 backgroundColor: "#0d0101",
                 borderColor: "#0d0101",
                 pointBackgroundColor: "#0d0101",
@@ -126,7 +149,7 @@ export const WebMapView: React.FC = () => {
                 data: displayData["hourlyPrecipitationProbability"],
               },
               {
-                label: `hourlyWeatherCode ${displayData["unit"]}`,
+                label: `hourlyWeatherCode`,
                 backgroundColor: "#0d0101",
                 borderColor: "#0d0101",
                 pointBackgroundColor: "#0d0101",
