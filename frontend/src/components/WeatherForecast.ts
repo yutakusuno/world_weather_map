@@ -168,7 +168,6 @@ export const processingData = (data: ResData) => {
 
     const monthDate = `${dayOfStr(day)}, ${date} ${monthOfStr(month)}`;
     if (dailyData[monthDate] === undefined)
-      // TODO when use initDisplayData here, the dailyData breaks
       dailyData[monthDate] = {
         hourlyTime: [],
         hourlyTemperature: [],
@@ -195,7 +194,7 @@ export const processingData = (data: ResData) => {
     .map((val, idx) => {
       const start = idx === 0 ? idx : lastIndex;
       lastIndex = val;
-      return data["hourly"]["temperature_2m"].slice(start, val);
+      return data["hourly"]["temperature_2m"].slice(start, val + 1);
     })
     .forEach(
       (val, idx, _) =>
@@ -206,7 +205,7 @@ export const processingData = (data: ResData) => {
     .map((val, idx) => {
       const start = idx === 0 ? idx : lastIndex;
       lastIndex = val;
-      return data["hourly"]["relativehumidity_2m"].slice(start, val);
+      return data["hourly"]["relativehumidity_2m"].slice(start, val + 1);
     })
     .forEach(
       (val, idx, _) =>
@@ -217,7 +216,7 @@ export const processingData = (data: ResData) => {
     .map((val, idx) => {
       const start = idx === 0 ? idx : lastIndex;
       lastIndex = val;
-      return data["hourly"]["precipitation_probability"].slice(start, val);
+      return data["hourly"]["precipitation_probability"].slice(start, val + 1);
     })
     .forEach(
       (val, idx, _) =>
@@ -228,7 +227,7 @@ export const processingData = (data: ResData) => {
     .map((val, idx) => {
       const start = idx === 0 ? idx : lastIndex;
       lastIndex = val;
-      return data["hourly"]["weathercode"].slice(start, val);
+      return data["hourly"]["weathercode"].slice(start, val + 1);
     })
     .forEach(
       (val, idx, _) =>
