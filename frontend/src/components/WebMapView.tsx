@@ -107,92 +107,108 @@ export const WebMapView: React.FC = () => {
   return (
     <div id="viewDiv">
       <div id="lineChart" className="esri-widget">
-        <div>
+        <div className="flex justify-normal">
           {processedData
             ? Object.keys(processedData).map((val, idx) => {
                 return (
-                  <button onClick={() => handleClick(idx)} key={idx}>
+                  <button
+                    className="inline-block py-4 mx-1 text-lg font-bold text-white bg-gray-800 px-5 hover:bg-gray-700 opacity-80"
+                    onClick={() => handleClick(idx)}
+                    key={idx}
+                  >
                     {val}
                   </button>
                 );
               })
             : ""}
         </div>
-        <Line
-          height={120}
-          width={600}
-          data={{
-            labels: displayData["hourlyTime"],
-            datasets: [
-              {
-                label: `hourly temperature / timezone`,
-                backgroundColor: "#0d0101",
-                borderColor: "#0d0101",
-                pointBackgroundColor: "#0d0101",
-                pointBorderColor: "#0d0101",
-                data: displayData["hourlyTemperature"],
-              },
-              {
-                label: `hourlyRelativeHumidity`,
-                backgroundColor: "#0d0101",
-                borderColor: "#0d0101",
-                pointBackgroundColor: "#0d0101",
-                pointBorderColor: "#0d0101",
-                data: displayData["hourlyRelativeHumidity"],
-              },
-              {
-                label: `hourlyPrecipitationProbability`,
-                backgroundColor: "#0d0101",
-                borderColor: "#0d0101",
-                pointBackgroundColor: "#0d0101",
-                pointBorderColor: "#0d0101",
-                data: displayData["hourlyPrecipitationProbability"],
-              },
-              {
-                label: `hourlyWeatherCode`,
-                backgroundColor: "#0d0101",
-                borderColor: "#0d0101",
-                pointBackgroundColor: "#0d0101",
-                pointBorderColor: "#0d0101",
-                data: displayData["hourlyWeatherCode"],
-              },
-            ],
-          }}
-          options={{
-            plugins: {
-              // https://www.chartjs.org/docs/master/configuration/legend.html
-              legend: {
-                labels: {
-                  color: "#0d0101",
-                  font: {
-                    size: 15,
-                    weight: "bold",
+        <div className="grid grid-cols-8 gap-4 text-white text-lg font-bold">
+          <div className="col-span-1">
+            <h1 className="text-3xl mx-1">Now</h1>
+            <div className="grid grid-rows-3 grid-flow-col gap-4">
+              <div>Temperature</div>
+              <div>Humidity</div>
+              <div>Precipitation</div>
+            </div>
+          </div>
+          <div className="col-span-7">
+            <Line
+              height={120}
+              width={600}
+              data={{
+                labels: displayData["hourlyTime"],
+                datasets: [
+                  {
+                    label: `Temperature`,
+                    backgroundColor: "#79f988",
+                    borderColor: "#79f988",
+                    pointBackgroundColor: "#79f988",
+                    pointBorderColor: "#79f988",
+                    data: displayData["hourlyTemperature"],
+                  },
+                  {
+                    label: `Humidity`,
+                    backgroundColor: "#648bff",
+                    borderColor: "#648bff",
+                    pointBackgroundColor: "#648bff",
+                    pointBorderColor: "#648bff",
+                    data: displayData["hourlyRelativeHumidity"],
+                  },
+                  {
+                    label: `Precipitation`,
+                    backgroundColor: "#ff8383",
+                    borderColor: "#ff8383",
+                    pointBackgroundColor: "#ff8383",
+                    pointBorderColor: "#ff8383",
+                    data: displayData["hourlyPrecipitationProbability"],
+                  },
+                  {
+                    label: `Weather Code`,
+                    backgroundColor: "#0d0101",
+                    borderColor: "#0d0101",
+                    pointBackgroundColor: "#0d0101",
+                    pointBorderColor: "#0d0101",
+                    data: displayData["hourlyWeatherCode"],
+                  },
+                ],
+              }}
+              options={{
+                plugins: {
+                  // https://www.chartjs.org/docs/master/configuration/legend.html
+                  legend: {
+                    labels: {
+                      color: "#ffffff",
+                      font: {
+                        size: 15,
+                        weight: "bold",
+                      },
+                    },
                   },
                 },
-              },
-            },
-            scales: {
-              x: {
-                ticks: {
-                  color: "#0d0101",
-                  font: {
-                    size: 15,
-                    weight: "bold",
+                scales: {
+                  x: {
+                    ticks: {
+                      color: "#ffffff",
+                      font: {
+                        size: 15,
+                        weight: "bold",
+                      },
+                    },
+                  },
+                  y: {
+                    ticks: {
+                      color: "#ffffff",
+                      font: {
+                        size: 15,
+                        weight: "bold",
+                      },
+                    },
                   },
                 },
-              },
-              y: {
-                ticks: {
-                  color: "#0d0101",
-                  font: {
-                    size: 15,
-                    weight: "bold",
-                  },
-                },
-              },
-            },
-          }}
-        />
+              }}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

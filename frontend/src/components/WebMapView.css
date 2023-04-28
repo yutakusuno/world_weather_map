@@ -11,5 +11,6 @@
   width: 100vw;
   left: 3px;
   right: 3px;
-  bottom: 18px;
+  bottom: 1vw;
+  background-color: rgba(71, 71, 71, 0.585);
 }
