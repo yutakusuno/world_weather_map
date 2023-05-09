@@ -7,7 +7,12 @@ import {
   openMeteoApiCall,
   processingData,
 } from "./WeatherForecast";
-import type { ResData, Point, DisplayData } from "./WeatherForecast";
+import type {
+  ResData,
+  Point,
+  HourlyData,
+  CurrentData,
+} from "./WeatherForecast";
 
 import {
   Chart as ChartJS,
@@ -34,9 +39,10 @@ ChartJS.register(
 export const WebMapView: React.FC = () => {
   const [resData, setResData] = useState<ResData>(initResData);
   const [processedData, setProcessedData] = useState<{
-    [key: string]: DisplayData;
+    dailyData: { [key: string]: HourlyData };
+    currentData: CurrentData;
   }>();
-  const [displayData, setDisplayData] = useState<DisplayData>(initDisplayData);
+  const [displayData, setDisplayData] = useState<HourlyData>(initDisplayData);
 
   const getWeatherData = async (point: Point) => {
     const data = openMeteoApiCall({
@@ -91,17 +97,22 @@ export const WebMapView: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const data: { [key: string]: DisplayData } = { ...processingData(resData) };
+    const data: {
+      dailyData: { [key: string]: HourlyData };
+      currentData: CurrentData;
+    } = { ...processingData(resData) };
     setProcessedData(data);
   }, [resData]);
 
   useEffect(() => {
     console.log("processedData", processedData);
-    if (processedData) setDisplayData(Object.values(processedData)[0]);
+    if (processedData)
+      setDisplayData(Object.values(processedData["dailyData"])[0]);
   }, [processedData]);
 
   const handleClick = (idx: number) => {
-    if (processedData) setDisplayData(Object.values(processedData)[idx]);
+    if (processedData)
+      setDisplayData(Object.values(processedData["dailyData"])[idx]);
   };
 
   return (
@@ -109,7 +120,7 @@ export const WebMapView: React.FC = () => {
       <div id="lineChart" className="esri-widget">
         <div className="flex justify-normal">
           {processedData
-            ? Object.keys(processedData).map((val, idx) => {
+            ? Object.keys(processedData["dailyData"]).map((val, idx) => {
                 return (
                   <button
                     className="inline-block py-4 mx-1 text-lg font-bold text-white bg-gray-800 px-5 hover:bg-gray-700 opacity-80"
@@ -126,9 +137,16 @@ export const WebMapView: React.FC = () => {
           <div className="col-span-1">
             <h1 className="text-3xl mx-1">Now</h1>
             <div className="grid grid-rows-3 grid-flow-col gap-4">
-              <div>Temperature</div>
-              <div>Humidity</div>
-              <div>Precipitation</div>
+              <div>
+                <h6>Time:</h6>
+                {processedData ? processedData["currentData"]["time"] : ""}
+              </div>
+              <div>
+                <h6>Temperature:</h6>
+                {processedData
+                  ? processedData["currentData"]["temperature"]
+                  : ""}
+              </div>
             </div>
           </div>
           <div className="col-span-7">

@@ -124,7 +124,7 @@ const monthOfStr = (day: number) => {
   );
 };
 
-export type DisplayData = {
+export type HourlyData = {
   hourlyTime: string[];
   hourlyTemperature: number[];
   hourlyRelativeHumidity: number[];
@@ -132,7 +132,12 @@ export type DisplayData = {
   hourlyWeatherCode: number[];
 };
 
-export const initDisplayData: DisplayData = {
+export type CurrentData = {
+  time: string;
+  temperature: number;
+};
+
+export const initDisplayData: HourlyData = {
   hourlyTime: [],
   hourlyTemperature: [],
   hourlyRelativeHumidity: [],
@@ -140,20 +145,11 @@ export const initDisplayData: DisplayData = {
   hourlyWeatherCode: [],
 };
 
-// prepare current data,in addition to daily data
-// type DailyData = {
-//   hourlyTime: [];
-//   hourlyTemperature: [];
-//   hourlyRelativeHumidity: [];
-//   hourlyPrecipitationProbability: [];
-//   hourlyWeatherCode: [];
-// };
-
 export const processingData = (data: ResData) => {
   console.log("resData", data);
 
   let dailyIndies: { [key: string]: number } = {};
-  let dailyData: { [key: string]: DisplayData } = {};
+  let dailyData: { [key: string]: HourlyData } = {};
 
   let date: number = 99;
   let month: number = 99;
@@ -234,5 +230,21 @@ export const processingData = (data: ResData) => {
         (dailyData[monthDateList[idx]]["hourlyWeatherCode"] = val)
     );
 
-  return dailyData;
+  const dateAndTime = new Date(data["current_weather"]["time"]);
+  day = dateAndTime.getDay();
+  date = dateAndTime.getDate();
+  month = dateAndTime.getMonth();
+  const time = dateAndTime.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  const currentData: CurrentData = {
+    time: `${time}, ${dayOfStr(day)}, ${date} ${monthOfStr(month)}`,
+    temperature: data["current_weather"]["temperature"],
+  };
+
+  return {
+    dailyData: dailyData,
+    currentData: currentData,
+  };
 };
