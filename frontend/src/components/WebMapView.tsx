@@ -16,24 +16,28 @@ import type {
 
 import {
   Chart as ChartJS,
-  CategoryScale,
   LinearScale,
+  CategoryScale,
+  BarElement,
   PointElement,
   LineElement,
-  Title,
-  Tooltip,
   Legend,
+  Tooltip,
+  LineController,
+  BarController,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
+import { Chart } from "react-chartjs-2";
 
 ChartJS.register(
-  CategoryScale,
   LinearScale,
+  CategoryScale,
+  BarElement,
   PointElement,
   LineElement,
-  Title,
+  Legend,
   Tooltip,
-  Legend
+  LineController,
+  BarController
 );
 
 export const WebMapView: React.FC = () => {
@@ -133,7 +137,7 @@ export const WebMapView: React.FC = () => {
               })
             : ""}
         </div>
-        <div className="grid grid-cols-8 gap-4 text-white text-lg font-bold">
+        <div className="grid grid-cols-12 gap-4 text-white text-lg font-bold">
           <div className="col-span-1">
             <h1 className="text-3xl mx-1">Now</h1>
             <div className="grid grid-rows-3 grid-flow-col gap-4">
@@ -149,44 +153,31 @@ export const WebMapView: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="col-span-7">
-            <Line
+          <div className="col-span-11">
+            <Chart
               height={120}
               width={600}
+              type="bar"
               data={{
                 labels: displayData["hourlyTime"],
                 datasets: [
                   {
+                    type: "line" as const,
                     label: `Temperature`,
-                    backgroundColor: "#79f988",
-                    borderColor: "#79f988",
-                    pointBackgroundColor: "#79f988",
-                    pointBorderColor: "#79f988",
+                    backgroundColor: "#67d574",
+                    borderColor: "#67d574",
+                    pointBackgroundColor: "#67d574",
+                    pointBorderColor: "#67d574",
                     data: displayData["hourlyTemperature"],
+                    yAxisID: "y",
                   },
                   {
-                    label: `Humidity`,
+                    type: "bar" as const,
+                    label: `Precipitation`,
                     backgroundColor: "#648bff",
                     borderColor: "#648bff",
-                    pointBackgroundColor: "#648bff",
-                    pointBorderColor: "#648bff",
-                    data: displayData["hourlyRelativeHumidity"],
-                  },
-                  {
-                    label: `Precipitation`,
-                    backgroundColor: "#ff8383",
-                    borderColor: "#ff8383",
-                    pointBackgroundColor: "#ff8383",
-                    pointBorderColor: "#ff8383",
                     data: displayData["hourlyPrecipitationProbability"],
-                  },
-                  {
-                    label: `Weather Code`,
-                    backgroundColor: "#0d0101",
-                    borderColor: "#0d0101",
-                    pointBackgroundColor: "#0d0101",
-                    pointBorderColor: "#0d0101",
-                    data: displayData["hourlyWeatherCode"],
+                    yAxisID: "y1",
                   },
                 ],
               }}
@@ -214,11 +205,28 @@ export const WebMapView: React.FC = () => {
                     },
                   },
                   y: {
+                    position: "left" as const,
                     ticks: {
                       color: "#ffffff",
                       font: {
                         size: 15,
                         weight: "bold",
+                      },
+                      callback: function (value) {
+                        return `${value}℃`;
+                      },
+                    },
+                  },
+                  y1: {
+                    position: "right" as const,
+                    ticks: {
+                      color: "#ffffff",
+                      font: {
+                        size: 15,
+                        weight: "bold",
+                      },
+                      callback: function (value) {
+                        return `${value}mm`;
                       },
                     },
                   },
