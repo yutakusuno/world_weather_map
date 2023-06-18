@@ -59,19 +59,9 @@ export const WebMapView: React.FC = () => {
   // Initialize ArcGIS Map
   useEffect(() => {
     // first lazy-load the esri classes
-    loadModules(
-      [
-        "esri/Map",
-        "esri/views/MapView",
-        "esri/layers/FeatureLayer",
-        "esri/widgets/TimeSlider",
-        "esri/widgets/Expand",
-        "esri/widgets/Legend",
-      ],
-      {
-        css: true,
-      }
-    ).then(([Map, MapView]) => {
+    loadModules(["esri/Map", "esri/views/MapView"], {
+      css: true,
+    }).then(([Map, MapView]) => {
       // create the Map
       const map = new Map({
         basemap: "hybrid",
@@ -81,7 +71,7 @@ export const WebMapView: React.FC = () => {
       const mapView = new MapView({
         container: "viewDiv",
         map: map,
-        center: [-80, 30],
+        center: [0, 50],
         zoom: 4,
       });
 
