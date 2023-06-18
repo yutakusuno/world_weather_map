@@ -5,12 +5,30 @@
   width: 100vw;
 }
 
+#esriWidget {
+  position: absolute;
+  height: 400px;
+  width: 100vw;
+}
+
 #lineChart {
   position: fixed;
-  height: 400px;
+  padding: 15px;
+  height: 350px;
   width: 100vw;
   left: 3px;
   right: 3px;
-  bottom: 1vw;
-  background-color: rgba(71, 71, 71, 0.585);
+  bottom: 20px;
+  background-color: rgba(39, 39, 42, 0.6);
+}
+
+#dateSelector {
+  position: fixed;
+  left: 3px;
+  right: 3px;
+  bottom: 383px;
+}
+
+input[type="radio"]:checked + label {
+  background-color: #000000;
 }

@@ -47,6 +47,7 @@ export const WebMapView: React.FC = () => {
     currentData: CurrentData;
   }>();
   const [displayData, setDisplayData] = useState<HourlyData>(initDisplayData);
+  const [dateIdx, setDateIdx] = useState<number>(0);
 
   const getWeatherData = async (point: Point) => {
     const data = openMeteoApiCall({
@@ -81,6 +82,7 @@ export const WebMapView: React.FC = () => {
           latitude: point.latitude,
           longitude: point.longitude,
         });
+        setDateIdx(0);
       });
 
       // clean up the map view
@@ -107,27 +109,40 @@ export const WebMapView: React.FC = () => {
   const handleClick = (idx: number) => {
     if (processedData)
       setDisplayData(Object.values(processedData["dailyData"])[idx]);
+    setDateIdx(idx);
   };
 
   return (
     <div id="viewDiv">
-      <div id="lineChart" className="esri-widget">
-        <div className="flex justify-normal">
+      <div id="esriWidget" className="esri-widget">
+        <div id="dateSelector" className="flex justify-normal">
           {processedData
             ? Object.keys(processedData["dailyData"]).map((val, idx) => {
                 return (
-                  <button
-                    className="inline-block py-4 mx-1 text-lg font-bold text-white bg-gray-800 px-5 hover:bg-gray-700 opacity-80"
-                    onClick={() => handleClick(idx)}
-                    key={idx}
-                  >
-                    {val}
+                  <button key={idx}>
+                    <input
+                      className="hidden"
+                      type="radio"
+                      id={val}
+                      name="weather"
+                      checked={dateIdx === idx}
+                      onChange={() => handleClick(idx)}
+                    />
+                    <label
+                      className="py-4 mx-1 text-lg font-bold text-white px-4 bg-zinc-800 hover:bg-black opacity-70 cursor-pointer"
+                      htmlFor={val}
+                    >
+                      {val}
+                    </label>
                   </button>
                 );
               })
             : ""}
         </div>
-        <div className="grid grid-cols-12 gap-4 text-white text-lg font-bold">
+        <div
+          id="lineChart"
+          className="grid grid-cols-12 gap-4 text-white text-lg font-bold"
+        >
           <div className="col-span-1">
             <h1 className="text-3xl mx-1">Now</h1>
             <div className="grid grid-rows-3 grid-flow-col gap-4">
@@ -138,7 +153,7 @@ export const WebMapView: React.FC = () => {
               <div>
                 <h6>Temperature:</h6>
                 {processedData
-                  ? processedData["currentData"]["temperature"]
+                  ? `${processedData["currentData"]["temperature"]}℃`
                   : ""}
               </div>
             </div>
