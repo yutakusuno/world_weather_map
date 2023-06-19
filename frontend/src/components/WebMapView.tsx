@@ -129,7 +129,7 @@ export const WebMapView: React.FC = () => {
                       onChange={() => handleClick(idx)}
                     />
                     <label
-                      className="py-4 mx-1 text-lg font-bold text-white px-4 bg-zinc-800 hover:bg-black opacity-70 cursor-pointer"
+                      className="py-3 mx-1 text-lg font-bold text-white px-4 bg-zinc-800 hover:bg-black opacity-70 cursor-pointer"
                       htmlFor={val}
                     >
                       {val}
@@ -143,25 +143,24 @@ export const WebMapView: React.FC = () => {
           id="lineChart"
           className="grid grid-cols-12 gap-4 text-white text-lg font-bold"
         >
-          <div className="col-span-1">
-            <h1 className="text-3xl mx-1">Now</h1>
+          <div className="col-span-2">
             <div className="grid grid-rows-3 grid-flow-col gap-4">
               <div>
-                <h6>Time:</h6>
+                <h1 className="text-3xl mx-1">Now</h1>
+              </div>
+              <div>
                 {processedData ? processedData["currentData"]["time"] : ""}
               </div>
               <div>
-                <h6>Temperature:</h6>
+                Temperature:{" "}
                 {processedData
                   ? `${processedData["currentData"]["temperature"]}℃`
                   : ""}
               </div>
             </div>
           </div>
-          <div className="col-span-11">
+          <div className="col-span-10">
             <Chart
-              height={120}
-              width={600}
               type="bar"
               data={{
                 labels: displayData["hourlyTime"],
@@ -187,6 +186,7 @@ export const WebMapView: React.FC = () => {
                 ],
               }}
               options={{
+                maintainAspectRatio: false,
                 plugins: {
                   // https://www.chartjs.org/docs/master/configuration/legend.html
                   legend: {

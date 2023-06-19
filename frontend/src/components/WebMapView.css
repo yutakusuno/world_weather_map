@@ -2,31 +2,26 @@
   padding: 0;
   margin: 0;
   height: 100vh;
-  width: 100vw;
 }
 
 #esriWidget {
   position: absolute;
-  height: 400px;
-  width: 100vw;
 }
 
 #lineChart {
   position: fixed;
   padding: 15px;
-  height: 350px;
-  width: 100vw;
-  left: 3px;
-  right: 3px;
+  height: 300px;
+  width: 100%;
+  left: 0px;
   bottom: 20px;
   background-color: rgba(39, 39, 42, 0.6);
 }
 
 #dateSelector {
   position: fixed;
-  left: 3px;
-  right: 3px;
-  bottom: 383px;
+  left: 0px;
+  bottom: 329px;
 }
 
 input[type="radio"]:checked + label {

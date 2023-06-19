@@ -173,8 +173,7 @@ export const processingData = (data: ResData) => {
       };
     dailyData[monthDate]["hourlyTime"].push(
       dateAndTime.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
+        hour: "numeric",
       })
     );
 
@@ -235,8 +234,7 @@ export const processingData = (data: ResData) => {
   date = dateAndTime.getDate();
   month = dateAndTime.getMonth();
   const time = dateAndTime.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
+    hour: "numeric",
   });
   const currentData: CurrentData = {
     time: `${time}, ${dayOfStr(day)}, ${date} ${monthOfStr(month)}`,
