@@ -1,8 +1,8 @@
 import axios from "axios";
 
 export type Point = {
-  latitude: number;
-  longitude: number;
+  lat: number;
+  lng: number;
 };
 
 export const initResData: ResData = {
@@ -82,8 +82,8 @@ interface HourlyUnits {
 export const openMeteoApiCall = async (point: Point) => {
   let data: any = {};
   let url: string = "https://api.open-meteo.com/v1/forecast";
-  url += `?latitude=${point.latitude}`;
-  url += `&longitude=${point.longitude}`;
+  url += `?latitude=${point.lat}`;
+  url += `&longitude=${point.lng}`;
   url += "&current_weather=true";
   url +=
     "&hourly=temperature_2m,relativehumidity_2m,precipitation_probability,weathercode";
