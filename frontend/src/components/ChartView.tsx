@@ -47,7 +47,6 @@ export const ChartView: React.FC<any> = ({ resData }) => {
   }, [resData]);
 
   useEffect(() => {
-    console.log("processedData", processedData);
     if (processedData)
       setDisplayData(Object.values(processedData["dailyData"])[0]);
   }, [processedData]);
