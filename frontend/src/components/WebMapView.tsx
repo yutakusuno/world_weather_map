@@ -51,8 +51,8 @@ export const WebMapView: React.FC = () => {
 
   const getWeatherData = async (point: Point) => {
     const data = openMeteoApiCall({
-      latitude: point.latitude,
-      longitude: point.longitude,
+      lat: point.lat,
+      lng: point.lng,
     });
     setResData(await data);
   };
@@ -79,8 +79,8 @@ export const WebMapView: React.FC = () => {
       mapView.on("click", (event: any) => {
         const point = mapView.toMap({ x: event.x, y: event.y });
         getWeatherData({
-          latitude: point.latitude,
-          longitude: point.longitude,
+          lat: point.lat,
+          lng: point.lng,
         });
         setDateIdx(0);
       });
