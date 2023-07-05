@@ -101,7 +101,6 @@ export const WebMapView: React.FC = () => {
   }, [resData]);
 
   useEffect(() => {
-    console.log("processedData", processedData);
     if (processedData)
       setDisplayData(Object.values(processedData["dailyData"])[0]);
   }, [processedData]);

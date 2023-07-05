@@ -146,8 +146,6 @@ export const initDisplayData: HourlyData = {
 };
 
 export const processingData = (data: ResData) => {
-  console.log("resData", data);
-
   let dailyIndies: { [key: string]: number } = {};
   let dailyData: { [key: string]: HourlyData } = {};
 

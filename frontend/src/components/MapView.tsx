@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { MapBox } from "./MapBox";
 import { ChartView } from "./ChartView";
-
 import { initResData, openMeteoApiCall } from "./WeatherForecast";
-
 import type { ResData, Point } from "./WeatherForecast";
 
 export const MapView: React.FC = () => {
