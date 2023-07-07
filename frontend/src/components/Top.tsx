@@ -31,3 +31,10 @@ export const MapView: React.FC = () => {
     </>
   );
 };
+
+// What I want to implement
+// Install buttons
+// To animate a rain radar,
+// To switch timezones,
+// To switch map styles,
+// To hide a chart view,

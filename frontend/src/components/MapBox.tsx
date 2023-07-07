@@ -71,7 +71,7 @@ export const MapBox: React.FC<IsOpenMeteoForecastData> = ({
         zoom: 3,
       }}
       style={{ width: "100vw", height: "100vh" }}
-      mapStyle="mapbox://styles/mapbox/dark-v11"
+      mapStyle="mapbox://styles/mapbox/streets-v12"
       onClick={(e) => {
         onMapClick(e);
       }}
