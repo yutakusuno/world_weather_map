@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { initDisplayData, processingData } from "./WeatherForecast";
+import { initDisplayData, collectChartData } from "./WeatherForecast";
 import type { HourlyData, CurrentData } from "./WeatherForecast";
-
-import "./MapView.css";
-
 import {
   Chart as ChartJS,
   LinearScale,
@@ -17,6 +14,7 @@ import {
   BarController,
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
+import "./ChartView.css";
 
 ChartJS.register(
   LinearScale,
@@ -31,37 +29,38 @@ ChartJS.register(
 );
 
 export const ChartView: React.FC<any> = ({ resData }) => {
-  const [processedData, setProcessedData] = useState<{
+  const [chartData, setChartData] = useState<{
     dailyData: { [key: string]: HourlyData };
     currentData: CurrentData;
   }>();
   const [displayData, setDisplayData] = useState<HourlyData>(initDisplayData);
   const [dateIdx, setDateIdx] = useState<number>(0);
 
+  const handleClick = (idx: number) => {
+    if (chartData) setDisplayData(Object.values(chartData["dailyData"])[idx]);
+    setDateIdx(idx);
+  };
+
   useEffect(() => {
     const data: {
       dailyData: { [key: string]: HourlyData };
       currentData: CurrentData;
-    } = { ...processingData(resData) };
-    setProcessedData(data);
+    } = { ...collectChartData(resData) };
+    setChartData(data);
   }, [resData]);
 
   useEffect(() => {
-    if (processedData)
-      setDisplayData(Object.values(processedData["dailyData"])[0]);
-  }, [processedData]);
-
-  const handleClick = (idx: number) => {
-    if (processedData)
-      setDisplayData(Object.values(processedData["dailyData"])[idx]);
-    setDateIdx(idx);
-  };
+    if (chartData) {
+      setDisplayData(Object.values(chartData["dailyData"])[0]);
+      setDateIdx(0);
+    }
+  }, [chartData]);
 
   return (
     <>
       <div id="dateSelector" className="flex justify-normal">
-        {processedData
-          ? Object.keys(processedData["dailyData"]).map((val, idx) => {
+        {chartData
+          ? Object.keys(chartData["dailyData"]).map((val, idx) => {
               return (
                 <button key={idx}>
                   <input
@@ -92,14 +91,10 @@ export const ChartView: React.FC<any> = ({ resData }) => {
             <div>
               <h1 className="text-3xl mx-1">Now</h1>
             </div>
-            <div>
-              {processedData ? processedData["currentData"]["time"] : ""}
-            </div>
+            <div>{chartData ? chartData["currentData"]["time"] : ""}</div>
             <div>
               Temperature:{" "}
-              {processedData
-                ? `${processedData["currentData"]["temperature"]}℃`
-                : ""}
+              {chartData ? `${chartData["currentData"]["temperature"]}℃` : ""}
             </div>
           </div>
         </div>

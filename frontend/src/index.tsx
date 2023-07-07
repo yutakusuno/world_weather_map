@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { MapView } from "./components/MapView";
+import { MapView } from "./components/Top";
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(

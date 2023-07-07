@@ -1,46 +1,5 @@
 import axios from "axios";
-
-export type Point = {
-  lat: number;
-  lng: number;
-};
-
-export const initResData: ResData = {
-  latitude: 52.52,
-  longitude: 13.419,
-  elevation: 44.812,
-  generationtime_ms: 2.2119,
-  utc_offset_seconds: 0,
-  timezone: "Europe/Berlin",
-  timezone_abbreviation: "CEST",
-  hourly: {
-    time: [
-      "2022-01-01T00:00",
-      "2022-01-01T01:00",
-      "2022-01-01T02:00",
-      "2022-01-01T03:00",
-      "2022-01-01T04:00",
-    ],
-    temperature_2m: [10, 5, 20, 15, 10],
-    relativehumidity_2m: [45, 44, 42, 39, 39, 40],
-    precipitation_probability: [0, 0, 0, 0, 0, 0],
-    weathercode: [0, 0, 1, 2, 3, 2],
-  },
-  hourly_units: {
-    time: "iso8601",
-    temperature_2m: "°C",
-    relativehumidity_2m: "%",
-    precipitation_probability: "%",
-    weathercode: "wmo code",
-  },
-  current_weather: {
-    time: "2022-01-01T00:00",
-    temperature: 13.3,
-    weathercode: 3,
-    windspeed: 10.3,
-    winddirection: 262,
-  },
-};
+import type { Point } from "./Top";
 
 export interface ResData {
   latitude: number;
@@ -78,6 +37,58 @@ interface HourlyUnits {
   precipitation_probability: string;
   weathercode: string;
 }
+
+export type HourlyData = {
+  hourlyTime: string[];
+  hourlyTemperature: number[];
+  hourlyRelativeHumidity: number[];
+  hourlyPrecipitationProbability: number[];
+  hourlyWeatherCode: number[];
+};
+
+export type CurrentData = {
+  time: string;
+  temperature: number;
+};
+
+export const initResData: ResData = {
+  latitude: 52.52,
+  longitude: 13.419,
+  elevation: 44.812,
+  generationtime_ms: 2.2119,
+  utc_offset_seconds: 0,
+  timezone: "Europe/Berlin",
+  timezone_abbreviation: "CEST",
+  hourly: {
+    time: ["2022-01-01T00:00", "2022-01-01T01:00", "2022-01-01T02:00"],
+    temperature_2m: [10, 5, 20],
+    relativehumidity_2m: [45, 44, 42],
+    precipitation_probability: [0, 0, 0],
+    weathercode: [0, 0, 1],
+  },
+  hourly_units: {
+    time: "iso8601",
+    temperature_2m: "°C",
+    relativehumidity_2m: "%",
+    precipitation_probability: "%",
+    weathercode: "wmo code",
+  },
+  current_weather: {
+    time: "2022-01-01T00:00",
+    temperature: 13.3,
+    weathercode: 3,
+    windspeed: 10.3,
+    winddirection: 262,
+  },
+};
+
+export const initDisplayData: HourlyData = {
+  hourlyTime: [],
+  hourlyTemperature: [],
+  hourlyRelativeHumidity: [],
+  hourlyPrecipitationProbability: [],
+  hourlyWeatherCode: [],
+};
 
 export const openMeteoApiCall = async (point: Point) => {
   let data: any = {};
@@ -124,38 +135,19 @@ const monthOfStr = (day: number) => {
   );
 };
 
-export type HourlyData = {
-  hourlyTime: string[];
-  hourlyTemperature: number[];
-  hourlyRelativeHumidity: number[];
-  hourlyPrecipitationProbability: number[];
-  hourlyWeatherCode: number[];
-};
-
-export type CurrentData = {
-  time: string;
-  temperature: number;
-};
-
-export const initDisplayData: HourlyData = {
-  hourlyTime: [],
-  hourlyTemperature: [],
-  hourlyRelativeHumidity: [],
-  hourlyPrecipitationProbability: [],
-  hourlyWeatherCode: [],
-};
-
-export const processingData = (data: ResData) => {
+export const collectChartData = (data: ResData) => {
   let dailyIndies: { [key: string]: number } = {};
   let dailyData: { [key: string]: HourlyData } = {};
 
   let date: number = 99;
   let month: number = 99;
   let day: number = 99;
+  let lastIndex: number = 0;
 
   // make the associative array for collecting daily data
   data["hourly"]["time"].forEach((val, idx, _) => {
     const dateAndTime = new Date(val);
+
     if (day !== dateAndTime.getDay()) day = dateAndTime.getDay();
     if (date !== dateAndTime.getDate()) date = dateAndTime.getDate();
     if (month !== dateAndTime.getMonth()) month = dateAndTime.getMonth();
@@ -182,7 +174,6 @@ export const processingData = (data: ResData) => {
   const monthDateList = Object.keys(dailyIndies);
   const lastIndexEachMonthDate = Object.values(dailyIndies);
 
-  let lastIndex: number = 0;
   lastIndexEachMonthDate
     .map((val, idx) => {
       const start = idx === 0 ? idx : lastIndex;
@@ -228,12 +219,15 @@ export const processingData = (data: ResData) => {
     );
 
   const dateAndTime = new Date(data["current_weather"]["time"]);
+
   day = dateAndTime.getDay();
   date = dateAndTime.getDate();
   month = dateAndTime.getMonth();
+
   const time = dateAndTime.toLocaleTimeString([], {
     hour: "numeric",
   });
+
   const currentData: CurrentData = {
     time: `${time}, ${dayOfStr(day)}, ${date} ${monthOfStr(month)}`,
     temperature: data["current_weather"]["temperature"],
