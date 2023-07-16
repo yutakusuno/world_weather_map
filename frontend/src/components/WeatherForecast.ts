@@ -136,15 +136,13 @@ const monthOfStr = (day: number) => {
 };
 
 export const collectChartData = (data: ResData) => {
-  let dailyIndies: { [key: string]: number } = {};
-  let dailyData: { [key: string]: HourlyData } = {};
-
   let date: number = 99;
   let month: number = 99;
   let day: number = 99;
-  let lastIndex: number = 0;
+  let dateIndies: { [key: string]: number } = {};
+  let dailyData: { [key: string]: HourlyData } = {};
 
-  // make the associative array for collecting daily data
+  // dailyData: an associative array to collect daily data
   data["hourly"]["time"].forEach((val, idx, _) => {
     const dateAndTime = new Date(val);
 
@@ -167,63 +165,63 @@ export const collectChartData = (data: ResData) => {
       })
     );
 
-    dailyIndies[monthDate] = idx;
+    dateIndies[monthDate] = idx;
   });
 
   // flags to specify daily data
-  const monthDateList = Object.keys(dailyIndies);
-  const lastIndexEachMonthDate = Object.values(dailyIndies);
+  const monthDateList = Object.keys(dateIndies);
+  const lastIndexEachMonthDate = Object.values(dateIndies);
+  let lastIndex: number = 0;
 
-  lastIndexEachMonthDate
-    .map((val, idx) => {
+  // divide hourly data into daily data
+  // [[15.6, 15.4, ...], [15.6, 15.4, ...], ...]
+  const hourlyTemperatureGroupByDate = lastIndexEachMonthDate.map(
+    (val, idx) => {
       const start = idx === 0 ? idx : lastIndex;
       lastIndex = val;
       return data["hourly"]["temperature_2m"].slice(start, val + 1);
-    })
-    .forEach(
-      (val, idx, _) =>
-        (dailyData[monthDateList[idx]]["hourlyTemperature"] = val)
-    );
-
-  lastIndexEachMonthDate
-    .map((val, idx) => {
-      const start = idx === 0 ? idx : lastIndex;
-      lastIndex = val;
-      return data["hourly"]["relativehumidity_2m"].slice(start, val + 1);
-    })
-    .forEach(
-      (val, idx, _) =>
-        (dailyData[monthDateList[idx]]["hourlyRelativeHumidity"] = val)
-    );
-
-  lastIndexEachMonthDate
-    .map((val, idx) => {
+    }
+  );
+  const hourlyHumidityGroupByDate = lastIndexEachMonthDate.map((val, idx) => {
+    const start = idx === 0 ? idx : lastIndex;
+    lastIndex = val;
+    return data["hourly"]["relativehumidity_2m"].slice(start, val + 1);
+  });
+  const hourlyPrecipitationProbabilityGroupByDate = lastIndexEachMonthDate.map(
+    (val, idx) => {
       const start = idx === 0 ? idx : lastIndex;
       lastIndex = val;
       return data["hourly"]["precipitation_probability"].slice(start, val + 1);
-    })
-    .forEach(
-      (val, idx, _) =>
-        (dailyData[monthDateList[idx]]["hourlyPrecipitationProbability"] = val)
-    );
-
-  lastIndexEachMonthDate
-    .map((val, idx) => {
+    }
+  );
+  const hourlyWeatherCodeGroupByDate = lastIndexEachMonthDate.map(
+    (val, idx) => {
       const start = idx === 0 ? idx : lastIndex;
       lastIndex = val;
       return data["hourly"]["weathercode"].slice(start, val + 1);
-    })
-    .forEach(
-      (val, idx, _) =>
-        (dailyData[monthDateList[idx]]["hourlyWeatherCode"] = val)
-    );
+    }
+  );
+
+  // add hourly data to daily data
+  hourlyTemperatureGroupByDate.forEach(
+    (val, idx, _) => (dailyData[monthDateList[idx]]["hourlyTemperature"] = val)
+  );
+  hourlyHumidityGroupByDate.forEach(
+    (val, idx, _) =>
+      (dailyData[monthDateList[idx]]["hourlyRelativeHumidity"] = val)
+  );
+  hourlyPrecipitationProbabilityGroupByDate.forEach(
+    (val, idx, _) =>
+      (dailyData[monthDateList[idx]]["hourlyPrecipitationProbability"] = val)
+  );
+  hourlyWeatherCodeGroupByDate.forEach(
+    (val, idx, _) => (dailyData[monthDateList[idx]]["hourlyWeatherCode"] = val)
+  );
 
   const dateAndTime = new Date(data["current_weather"]["time"]);
-
   day = dateAndTime.getDay();
   date = dateAndTime.getDate();
   month = dateAndTime.getMonth();
-
   const time = dateAndTime.toLocaleTimeString([], {
     hour: "numeric",
   });
