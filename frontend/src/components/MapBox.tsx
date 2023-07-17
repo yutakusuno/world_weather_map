@@ -20,7 +20,7 @@ const initCustomLayer: RasterLayer[] = [
   },
 ];
 
-const initPoint: Point = {
+export const initPoint: Point = {
   lat: 51,
   lng: -0.1,
 };
@@ -33,7 +33,7 @@ export const MapBox: React.FC<IsOpenMeteoForecastData> = ({
 
   const onMapClick = (e: any) => {
     const point: Point = e.lngLat;
-    openMeteoForecastData(point);
+    openMeteoForecastData(point, undefined);
   };
 
   const getRainRadarData = async () => {
@@ -43,7 +43,7 @@ export const MapBox: React.FC<IsOpenMeteoForecastData> = ({
 
   useEffect(() => {
     getRainRadarData();
-    openMeteoForecastData(initPoint);
+    openMeteoForecastData(initPoint, undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
