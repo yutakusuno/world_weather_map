@@ -271,8 +271,6 @@ export const collectChartData = (data: ResData) => {
   let dateIndies: { [key: string]: number } = {};
   let dailyData: { [key: string]: HourlyData } = {};
 
-  console.log("data", data);
-
   // dailyData: an associative array to collect daily data
   data["hourly"]["time"].forEach((val, idx, _) => {
     const dateAndTime = new Date(val);

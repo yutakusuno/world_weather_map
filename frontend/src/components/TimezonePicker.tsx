@@ -17,32 +17,32 @@ const timezones: Timezone[] = [
     value: "UTC",
   },
   {
-    label: "America/New_York",
-    value: "America/New_York",
+    label: "CET",
+    value: "Europe/Paris",
   },
   {
-    label: "America/Los_Angeles",
-    value: "America/Los_Angeles",
-  },
-  {
-    label: "Asia/Tokyo",
-    value: "Asia/Tokyo",
-  },
-  {
-    label: "Asia/Shanghai",
+    label: "CST",
     value: "Asia/Shanghai",
   },
   {
-    label: "Europe/Berlin",
-    value: "Europe/Berlin",
+    label: "EDT",
+    value: "America/New_York",
   },
   {
-    label: "Europe/Moscow",
+    label: "GMT",
+    value: "Europe/London",
+  },
+  {
+    label: "JST",
+    value: "Asia/Tokyo",
+  },
+  {
+    label: "MSK",
     value: "Europe/Moscow",
   },
   {
-    label: "Europe/Paris",
-    value: "Europe/Paris",
+    label: "PST",
+    value: "America/Los_Angeles",
   },
 ];
 
