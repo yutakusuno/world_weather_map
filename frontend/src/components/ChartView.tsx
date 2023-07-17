@@ -15,6 +15,7 @@ import {
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
 import "./ChartView.css";
+import { TimezonePicker } from "./TimezonePicker";
 
 ChartJS.register(
   LinearScale,
@@ -28,7 +29,10 @@ ChartJS.register(
   BarController
 );
 
-export const ChartView: React.FC<any> = ({ resData }) => {
+export const ChartView: React.FC<{
+  resData: any;
+  openMeteoForecastData: any;
+}> = ({ resData, openMeteoForecastData }) => {
   const [chartData, setChartData] = useState<{
     dailyData: { [key: string]: HourlyData };
     currentData: CurrentData;
@@ -87,15 +91,16 @@ export const ChartView: React.FC<any> = ({ resData }) => {
         className="grid grid-cols-12 gap-4 text-white text-lg font-bold"
       >
         <div className="col-span-2">
-          <div className="grid grid-rows-3 grid-flow-col gap-4">
+          <div className="grid grid-rows-3 grid-flow-col">
             <div>
-              <h1 className="text-3xl mx-1">Now</h1>
+              <div className="text-3xl">
+                Now{" "}
+                {chartData ? `${chartData["currentData"]["temperature"]}℃` : ""}
+              </div>
+              {chartData ? chartData["currentData"]["weather"] : ""}
             </div>
             <div>{chartData ? chartData["currentData"]["time"] : ""}</div>
-            <div>
-              Temperature:{" "}
-              {chartData ? `${chartData["currentData"]["temperature"]}℃` : ""}
-            </div>
+            <TimezonePicker openMeteoForecastData={openMeteoForecastData} />
           </div>
         </div>
         <div className="col-span-10">

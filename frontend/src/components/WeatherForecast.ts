@@ -49,6 +49,7 @@ export type HourlyData = {
 export type CurrentData = {
   time: string;
   temperature: number;
+  weather: string;
 };
 
 export const initResData: ResData = {
@@ -90,12 +91,16 @@ export const initDisplayData: HourlyData = {
   hourlyWeatherCode: [],
 };
 
-export const openMeteoApiCall = async (point: Point) => {
+export const openMeteoApiCall = async (
+  point: Point,
+  timezone: string | undefined
+) => {
   let data: any = {};
   let url: string = "https://api.open-meteo.com/v1/forecast";
   url += `?latitude=${point.lat}`;
   url += `&longitude=${point.lng}`;
   url += "&current_weather=true";
+  if (timezone) url += `&timezone=${timezone}`;
   url +=
     "&hourly=temperature_2m,relativehumidity_2m,precipitation_probability,weathercode";
   try {
@@ -135,12 +140,138 @@ const monthOfStr = (day: number) => {
   );
 };
 
+const wetherCodeOfStr = (weatherCode: number) => {
+  const codeDescription = [
+    {
+      code: 0,
+      description: "Clear sky",
+    },
+    {
+      code: 1,
+      description: "Mainly clear",
+    },
+    {
+      code: 2,
+      description: "Partly cloudy",
+    },
+    {
+      code: 3,
+      description: "Overcast",
+    },
+    {
+      code: 45,
+      description: "Fog",
+    },
+    {
+      code: 48,
+      description: "Depositing rime fog",
+    },
+    {
+      code: 51,
+      description: "Drizzle: Light",
+    },
+    {
+      code: 53,
+      description: "Drizzle: Moderate",
+    },
+    {
+      code: 55,
+      description: "Drizzle: Dense intensity",
+    },
+    {
+      code: 56,
+      description: "Freezing Drizzle: Light",
+    },
+    {
+      code: 57,
+      description: "Freezing Drizzle: Dense intensity",
+    },
+    {
+      code: 61,
+      description: "Rain: Slight",
+    },
+    {
+      code: 63,
+      description: "Rain: Moderate",
+    },
+    {
+      code: 65,
+      description: "Rain: Heavy intensity",
+    },
+    {
+      code: 66,
+      description: "Freezing Rain: Light",
+    },
+    {
+      code: 67,
+      description: "Freezing Rain: Heavy intensity",
+    },
+    {
+      code: 71,
+      description: "Snow fall: Slight",
+    },
+    {
+      code: 73,
+      description: "Snow fall: Moderate",
+    },
+    {
+      code: 75,
+      description: "Snow fall: Heavy intensity",
+    },
+    {
+      code: 77,
+      description: "Snow grains",
+    },
+    {
+      code: 80,
+      description: "Rain showers: Slight",
+    },
+    {
+      code: 81,
+      description: "Rain showers: Moderate",
+    },
+    {
+      code: 82,
+      description: "Rain showers: Violent",
+    },
+    {
+      code: 85,
+      description: "Snow showers: Slight",
+    },
+    {
+      code: 86,
+      description: "Snow showers: Heavy",
+    },
+    {
+      code: 95,
+      description: "Thunderstorm: Slight or moderate",
+    },
+    {
+      code: 96,
+      description: "Thunderstorm with slight hail",
+    },
+    {
+      code: 99,
+      description: "Thunderstorm with heavy hail",
+    },
+  ];
+
+  let descriptionIndex: number = 999;
+  codeDescription.forEach((val, idx, _) => {
+    if (val["code"] === weatherCode) descriptionIndex = idx;
+  });
+
+  return codeDescription[descriptionIndex]["description"] || "";
+};
+
 export const collectChartData = (data: ResData) => {
   let date: number = 99;
   let month: number = 99;
   let day: number = 99;
   let dateIndies: { [key: string]: number } = {};
   let dailyData: { [key: string]: HourlyData } = {};
+
+  console.log("data", data);
 
   // dailyData: an associative array to collect daily data
   data["hourly"]["time"].forEach((val, idx, _) => {
@@ -150,7 +281,7 @@ export const collectChartData = (data: ResData) => {
     if (date !== dateAndTime.getDate()) date = dateAndTime.getDate();
     if (month !== dateAndTime.getMonth()) month = dateAndTime.getMonth();
 
-    const monthDate = `${dayOfStr(day)}, ${date} ${monthOfStr(month)}`;
+    const monthDate = `${dayOfStr(day)} ${monthOfStr(month)} ${date}`;
     if (dailyData[monthDate] === undefined)
       dailyData[monthDate] = {
         hourlyTime: [],
@@ -227,8 +358,9 @@ export const collectChartData = (data: ResData) => {
   });
 
   const currentData: CurrentData = {
-    time: `${time}, ${dayOfStr(day)}, ${date} ${monthOfStr(month)}`,
+    time: `${dayOfStr(day)} ${monthOfStr(month)} ${date}, ${time}`,
     temperature: data["current_weather"]["temperature"],
+    weather: wetherCodeOfStr(data["current_weather"]["weathercode"]),
   };
 
   return {
