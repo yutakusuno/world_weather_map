@@ -13,8 +13,8 @@ interface ArrayObjectSelectState {
 
 const timezones: Timezone[] = [
   {
-    label: "UTC",
-    value: "UTC",
+    label: "PST",
+    value: "America/Los_Angeles",
   },
   {
     label: "CET",
@@ -41,10 +41,12 @@ const timezones: Timezone[] = [
     value: "Europe/Moscow",
   },
   {
-    label: "PST",
-    value: "America/Los_Angeles",
+    label: "UTC",
+    value: "UTC",
   },
 ];
+
+export const initTimezone: string = timezones[0].value;
 
 export const TimezonePicker: React.FC<IsOpenMeteoForecastData> = ({
   openMeteoForecastData,

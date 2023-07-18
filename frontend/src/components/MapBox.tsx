@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Map, {
   FullscreenControl,
   Layer,
+  Marker,
   NavigationControl,
   Source,
 } from "react-map-gl";
@@ -21,18 +22,22 @@ const initCustomLayer: RasterLayer[] = [
 ];
 
 export const initPoint: Point = {
-  lat: 51,
-  lng: -0.1,
+  lat: 49.246292,
+  lng: -123.116226,
 };
 
 export const MapBox: React.FC<IsOpenMeteoForecastData> = ({
   openMeteoForecastData,
 }) => {
+  const [lat, setLat] = useState<number>(initPoint.lat);
+  const [lng, setLng] = useState<number>(initPoint.lng);
   const [resData, setResData] = useState<any>("");
   const [layers, setLayers] = useState<RasterLayer[]>(initCustomLayer);
 
   const onMapClick = (e: any) => {
     const point: Point = e.lngLat;
+    setLat(point.lat);
+    setLng(point.lng);
     openMeteoForecastData(point, undefined);
   };
 
@@ -68,7 +73,7 @@ export const MapBox: React.FC<IsOpenMeteoForecastData> = ({
       initialViewState={{
         latitude: initPoint.lat,
         longitude: initPoint.lng,
-        zoom: 3,
+        zoom: 9,
       }}
       style={{ width: "100vw", height: "100vh" }}
       mapStyle="mapbox://styles/mapbox/streets-v12"
@@ -76,6 +81,8 @@ export const MapBox: React.FC<IsOpenMeteoForecastData> = ({
         onMapClick(e);
       }}
     >
+      <Marker latitude={lat} longitude={lng} anchor="center" />
+
       <FullscreenControl />
       <NavigationControl />
       {layers.map((val: RasterLayer) => {

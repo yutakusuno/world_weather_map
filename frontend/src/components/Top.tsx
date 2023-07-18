@@ -3,6 +3,7 @@ import { initPoint, MapBox } from "./MapBox";
 import { ChartView } from "./ChartView";
 import { initResData, openMeteoApiCall } from "./WeatherForecast";
 import type { ResData } from "./WeatherForecast";
+import { initTimezone } from "./TimezonePicker";
 
 export type Point = {
   lat: number;
@@ -17,7 +18,7 @@ export const MapView: React.FC = () => {
   const [resData, setResData] = useState<ResData>(initResData);
   const [lat, setLat] = useState<number>(initPoint.lat);
   const [lng, setLng] = useState<number>(initPoint.lng);
-  const [timezone, setTimezone] = useState<string | undefined>(undefined);
+  const [timezone, setTimezone] = useState<string | undefined>(initTimezone);
 
   const openMeteoForecastData = async (
     point: Point,
