@@ -12,12 +12,14 @@ import type { Point, IsOpenMeteoForecastData } from "./Top";
 import type { RasterLayer } from "react-map-gl";
 
 const mapboxAccessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
+const rasterOpacity = 0.1;
 
 const initCustomLayer: RasterLayer[] = [
   {
     id: "layer",
     type: "raster",
     source: "",
+    paint: { "raster-opacity": rasterOpacity },
   },
 ];
 
@@ -60,6 +62,7 @@ export const MapBox: React.FC<IsOpenMeteoForecastData> = ({
           id: `rainviewer_${frame.path}`,
           type: "raster",
           source: `${frame.path}`,
+          paint: { "raster-opacity": rasterOpacity },
         };
       }
     );

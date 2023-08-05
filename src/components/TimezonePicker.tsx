@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import Select from "react-select";
 import { IsOpenMeteoForecastData } from "./Top";
+import Select from "react-select";
 
 interface Timezone {
   label: string;
