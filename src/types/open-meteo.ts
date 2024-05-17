@@ -1,3 +1,8 @@
+export type weatherCodeDescription = {
+  code: number;
+  description: string;
+};
+
 export type ResData = {
   latitude: number;
   longitude: number;

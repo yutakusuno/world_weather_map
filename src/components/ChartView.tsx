@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { initDisplayData, collectChartData } from './WeatherForecast';
+import { collectChartData } from './WeatherForecast';
 import {
   Chart as ChartJS,
   LinearScale,
@@ -16,6 +16,7 @@ import { Chart } from 'react-chartjs-2';
 import './ChartView.css';
 import { TimezonePicker } from './TimezonePicker';
 import { CurrentData, HourlyData } from '../types/open-meteo';
+import { initDisplayData } from '../data/open-meteo';
 
 ChartJS.register(
   LinearScale,

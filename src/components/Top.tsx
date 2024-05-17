@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { initPoint, MapBox } from './MapBox';
 import { ChartView } from './ChartView';
-import { initResData } from './WeatherForecast';
 import { initTimezone } from './TimezonePicker';
 import { Point } from '../types/types';
 import { getWeatherForecastData } from '../api/open-meteo';
 import { ResData } from '../types/open-meteo';
+import { initResData } from '../data/open-meteo';
 
 export const MapView = () => {
   const [resData, setResData] = useState<ResData>(initResData);
