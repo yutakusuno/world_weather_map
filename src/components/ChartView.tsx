@@ -15,8 +15,9 @@ import {
 import { Chart } from 'react-chartjs-2';
 import './ChartView.css';
 import { TimezonePicker } from './TimezonePicker';
-import { CurrentData, HourlyData } from '../types/open-meteo';
+import { CurrentData, HourlyData, ResData } from '../types/open-meteo';
 import { initDisplayData } from '../data/open-meteo';
+import { HandleUpdateWeatherForecast } from '../types/types';
 
 ChartJS.register(
   LinearScale,
@@ -32,10 +33,10 @@ ChartJS.register(
 
 export const ChartView = ({
   resData,
-  openMeteoForecastData,
+  handleUpdateWeatherForecast,
 }: {
-  resData: any;
-  openMeteoForecastData: any;
+  resData: ResData;
+  handleUpdateWeatherForecast: HandleUpdateWeatherForecast['handleUpdateWeatherForecast'];
 }) => {
   const [chartData, setChartData] = useState<{
     dailyData: { [key: string]: HourlyData };
@@ -104,7 +105,9 @@ export const ChartView = ({
               {chartData ? chartData['currentData']['weather'] : ''}
             </div>
             <div>{chartData ? chartData['currentData']['time'] : ''}</div>
-            <TimezonePicker openMeteoForecastData={openMeteoForecastData} />
+            <TimezonePicker
+              handleUpdateWeatherForecast={handleUpdateWeatherForecast}
+            />
           </div>
         </div>
         <div className='col-span-10'>

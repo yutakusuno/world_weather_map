@@ -13,10 +13,10 @@ export const MapView = () => {
   const [lng, setLng] = useState<number>(initPoint.lng);
   const [timezone, setTimezone] = useState<string | undefined>(initTimezone);
 
-  const openMeteoForecastData = async (
+  const handleUpdateWeatherForecast = async (
     point: Point,
     tz: string | undefined
-  ) => {
+  ): Promise<void> => {
     let lastLat = point.lat;
     let lastLng = point.lng;
     let lastTimezone = timezone;
@@ -26,11 +26,11 @@ export const MapView = () => {
     }
     if (tz) lastTimezone = tz;
 
-    const data = getWeatherForecastData(
+    const data = await getWeatherForecastData(
       { lat: lastLat, lng: lastLng },
       lastTimezone
     );
-    setResData(await data);
+    setResData(data);
     setLat(lastLat);
     setLng(lastLng);
     setTimezone(lastTimezone);
@@ -38,10 +38,10 @@ export const MapView = () => {
 
   return (
     <>
-      <MapBox openMeteoForecastData={openMeteoForecastData} />
+      <MapBox handleUpdateWeatherForecast={handleUpdateWeatherForecast} />
       <ChartView
         resData={resData}
-        openMeteoForecastData={openMeteoForecastData}
+        handleUpdateWeatherForecast={handleUpdateWeatherForecast}
       />
     </>
   );

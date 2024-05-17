@@ -3,8 +3,11 @@ export type Point = {
   lng: number;
 };
 
-export type IsOpenMeteoForecastData = {
-  openMeteoForecastData(point: Point, timezone: string | undefined): void;
+export type HandleUpdateWeatherForecast = {
+  handleUpdateWeatherForecast: (
+    point: Point,
+    timezone: string | undefined
+  ) => Promise<void>;
 };
 
 export type Timezone = {

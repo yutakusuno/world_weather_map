@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import Select from 'react-select';
 import {
   ArrayObjectSelectState,
-  IsOpenMeteoForecastData,
   Timezone,
+  HandleUpdateWeatherForecast,
 } from '../types/types';
 
 const timezones: Timezone[] = [
@@ -44,8 +44,8 @@ const timezones: Timezone[] = [
 export const initTimezone: string = timezones[0].value;
 
 export const TimezonePicker = ({
-  openMeteoForecastData,
-}: IsOpenMeteoForecastData) => {
+  handleUpdateWeatherForecast,
+}: HandleUpdateWeatherForecast) => {
   // I changed the position of the state here, that's how you should use the state in react
   // https://reactjs.org/docs/hooks-state.html#declaring-a-state-variable
 
@@ -55,7 +55,10 @@ export const TimezonePicker = ({
   });
 
   useEffect(() => {
-    openMeteoForecastData({ lat: 0, lng: 0 }, state.selectedTimezone?.value);
+    handleUpdateWeatherForecast(
+      { lat: 0, lng: 0 },
+      state.selectedTimezone?.value
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 

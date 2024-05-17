@@ -8,7 +8,7 @@ import Map, {
 } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import type { RasterLayer } from 'react-map-gl';
-import { IsOpenMeteoForecastData, Point } from '../types/types';
+import { HandleUpdateWeatherForecast, Point } from '../types/types';
 import { getRainRadarData } from '../api/rainviewer';
 import { RainViewerData } from '../types/rainviewer';
 
@@ -29,7 +29,9 @@ export const initPoint: Point = {
   lng: -123.116226,
 };
 
-export const MapBox = ({ openMeteoForecastData }: IsOpenMeteoForecastData) => {
+export const MapBox = ({
+  handleUpdateWeatherForecast,
+}: HandleUpdateWeatherForecast) => {
   const [lat, setLat] = useState<number>(initPoint.lat);
   const [lng, setLng] = useState<number>(initPoint.lng);
   const [resData, setResData] = useState<RainViewerData | undefined>(undefined);
@@ -39,7 +41,7 @@ export const MapBox = ({ openMeteoForecastData }: IsOpenMeteoForecastData) => {
     const point: Point = e.lngLat;
     setLat(point.lat);
     setLng(point.lng);
-    openMeteoForecastData(point, undefined);
+    handleUpdateWeatherForecast(point, undefined);
   };
 
   useEffect(() => {
@@ -47,7 +49,7 @@ export const MapBox = ({ openMeteoForecastData }: IsOpenMeteoForecastData) => {
       const data = await getRainRadarData();
 
       setResData(await data);
-      openMeteoForecastData(initPoint, undefined);
+      handleUpdateWeatherForecast(initPoint, undefined);
     };
 
     setWeatherMapData();
