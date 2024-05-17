@@ -12,12 +12,13 @@ import {
   BarController,
 } from 'chart.js';
 import { Chart } from 'react-chartjs-2';
-import './chart-view.css';
+
 import { TimezonePicker } from './timezone-picker';
-import { CurrentData, HourlyData, ResData } from '../types/open-meteo';
 import { initDisplayData } from '../data/open-meteo';
-import { HandleUpdateWeatherForecast } from '../types/types';
 import { collectChartData } from '../utils/chart';
+import { HandleUpdateWeatherForecast } from '../types/types';
+import { CurrentData, HourlyData, ResData } from '../types/open-meteo';
+import './chart-view.css';
 
 ChartJS.register(
   LinearScale,
