@@ -1,25 +1,26 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import Map, {
   FullscreenControl,
   Layer,
   Marker,
   NavigationControl,
   Source,
-} from "react-map-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
-import { rainRadarData } from "./RainViewer";
-import type { Point, IsOpenMeteoForecastData } from "./Top";
-import type { RasterLayer } from "react-map-gl";
+} from 'react-map-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import type { RasterLayer } from 'react-map-gl';
+import { IsOpenMeteoForecastData, Point } from '../types/types';
+import { getRainRadarData } from '../api/rainviewer';
+import { RainViewerData } from '../types/rainviewer';
 
 const mapboxAccessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 const rasterOpacity = 0.1;
 
 const initCustomLayer: RasterLayer[] = [
   {
-    id: "layer",
-    type: "raster",
-    source: "",
-    paint: { "raster-opacity": rasterOpacity },
+    id: 'layer',
+    type: 'raster',
+    source: '',
+    paint: { 'raster-opacity': rasterOpacity },
   },
 ];
 
@@ -28,12 +29,10 @@ export const initPoint: Point = {
   lng: -123.116226,
 };
 
-export const MapBox: React.FC<IsOpenMeteoForecastData> = ({
-  openMeteoForecastData,
-}) => {
+export const MapBox = ({ openMeteoForecastData }: IsOpenMeteoForecastData) => {
   const [lat, setLat] = useState<number>(initPoint.lat);
   const [lng, setLng] = useState<number>(initPoint.lng);
-  const [resData, setResData] = useState<any>("");
+  const [resData, setResData] = useState<RainViewerData | undefined>(undefined);
   const [layers, setLayers] = useState<RasterLayer[]>(initCustomLayer);
 
   const onMapClick = (e: any) => {
@@ -43,26 +42,28 @@ export const MapBox: React.FC<IsOpenMeteoForecastData> = ({
     openMeteoForecastData(point, undefined);
   };
 
-  const getRainRadarData = async () => {
-    const data: any = await rainRadarData();
-    setResData(await data);
-  };
-
   useEffect(() => {
-    getRainRadarData();
-    openMeteoForecastData(initPoint, undefined);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const setWeatherMapData = async () => {
+      const data = await getRainRadarData();
+
+      setResData(await data);
+      openMeteoForecastData(initPoint, undefined);
+    };
+
+    setWeatherMapData();
   }, []);
 
   useEffect(() => {
+    if (resData === undefined) return;
+
     if (resData.radar === undefined || resData.radar.past === undefined) return;
     const layerList = resData.radar.past.map(
       (frame: { path: string }): RasterLayer => {
         return {
           id: `rainviewer_${frame.path}`,
-          type: "raster",
+          type: 'raster',
           source: `${frame.path}`,
-          paint: { "raster-opacity": rasterOpacity },
+          paint: { 'raster-opacity': rasterOpacity },
         };
       }
     );
@@ -71,20 +72,20 @@ export const MapBox: React.FC<IsOpenMeteoForecastData> = ({
 
   return (
     <Map
-      mapLib={import("mapbox-gl")}
+      mapLib={import('mapbox-gl')}
       mapboxAccessToken={mapboxAccessToken}
       initialViewState={{
         latitude: initPoint.lat,
         longitude: initPoint.lng,
         zoom: 9,
       }}
-      style={{ width: "100vw", height: "100vh" }}
-      mapStyle="mapbox://styles/mapbox/streets-v12"
+      style={{ width: '100vw', height: '100vh' }}
+      mapStyle='mapbox://styles/mapbox/streets-v12'
       onClick={(e) => {
         onMapClick(e);
       }}
     >
-      <Marker latitude={lat} longitude={lng} anchor="center" />
+      <Marker latitude={lat} longitude={lng} anchor='center' />
 
       <FullscreenControl />
       <NavigationControl />
@@ -93,7 +94,7 @@ export const MapBox: React.FC<IsOpenMeteoForecastData> = ({
           <Source
             key={`${val.source}`}
             id={`${val.source}`}
-            type="raster"
+            type='raster'
             tiles={[
               `https://tilecache.rainviewer.com${layers[0].source}/256/{z}/{x}/{y}/2/1_1.png`,
             ]}

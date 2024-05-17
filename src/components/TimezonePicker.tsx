@@ -1,56 +1,51 @@
-import { useEffect, useState } from "react";
-import { IsOpenMeteoForecastData } from "./Top";
-import Select from "react-select";
-
-interface Timezone {
-  label: string;
-  value: string;
-}
-
-interface ArrayObjectSelectState {
-  selectedTimezone: Timezone | null;
-}
+import { useEffect, useState } from 'react';
+import Select from 'react-select';
+import {
+  ArrayObjectSelectState,
+  IsOpenMeteoForecastData,
+  Timezone,
+} from '../types/types';
 
 const timezones: Timezone[] = [
   {
-    label: "PST",
-    value: "America/Los_Angeles",
+    label: 'PST',
+    value: 'America/Los_Angeles',
   },
   {
-    label: "CET",
-    value: "Europe/Paris",
+    label: 'CET',
+    value: 'Europe/Paris',
   },
   {
-    label: "CST",
-    value: "Asia/Shanghai",
+    label: 'CST',
+    value: 'Asia/Shanghai',
   },
   {
-    label: "EDT",
-    value: "America/New_York",
+    label: 'EDT',
+    value: 'America/New_York',
   },
   {
-    label: "GMT",
-    value: "Europe/London",
+    label: 'GMT',
+    value: 'Europe/London',
   },
   {
-    label: "JST",
-    value: "Asia/Tokyo",
+    label: 'JST',
+    value: 'Asia/Tokyo',
   },
   {
-    label: "MSK",
-    value: "Europe/Moscow",
+    label: 'MSK',
+    value: 'Europe/Moscow',
   },
   {
-    label: "UTC",
-    value: "UTC",
+    label: 'UTC',
+    value: 'UTC',
   },
 ];
 
 export const initTimezone: string = timezones[0].value;
 
-export const TimezonePicker: React.FC<IsOpenMeteoForecastData> = ({
+export const TimezonePicker = ({
   openMeteoForecastData,
-}) => {
+}: IsOpenMeteoForecastData) => {
   // I changed the position of the state here, that's how you should use the state in react
   // https://reactjs.org/docs/hooks-state.html#declaring-a-state-variable
 
@@ -65,7 +60,7 @@ export const TimezonePicker: React.FC<IsOpenMeteoForecastData> = ({
   }, [state]);
 
   return (
-    <div className="timezone-picker">
+    <div className='timezone-picker'>
       <div>Time zone:</div>
       <Select
         // If you don't need a state you can remove the two following lines value & onChange
@@ -79,23 +74,23 @@ export const TimezonePicker: React.FC<IsOpenMeteoForecastData> = ({
         options={timezones}
         isClearable={false}
         backspaceRemovesValue={true}
-        menuPlacement={"auto"}
+        menuPlacement={'auto'}
         styles={{
           option: (defaultStyles, state) => ({
             ...defaultStyles,
-            color: "#000000",
+            color: '#000000',
             opacity: 0.8,
           }),
           control: (defaultStyles) => ({
             ...defaultStyles,
-            backgroundColor: "rgba(42, 39, 39, 0.6)",
-            padding: "0px",
-            border: "none",
-            boxShadow: "none",
+            backgroundColor: 'rgba(42, 39, 39, 0.6)',
+            padding: '0px',
+            border: 'none',
+            boxShadow: 'none',
           }),
           singleValue: (defaultStyles) => ({
             ...defaultStyles,
-            color: "#ffffff",
+            color: '#ffffff',
           }),
         }}
         theme={(theme) => ({
@@ -103,8 +98,8 @@ export const TimezonePicker: React.FC<IsOpenMeteoForecastData> = ({
           borderRadius: 0,
           colors: {
             ...theme.colors,
-            primary25: "rgba(200, 200, 200, 0.6)",
-            primary: "rgba(100, 100, 100, 0.6)",
+            primary25: 'rgba(200, 200, 200, 0.6)',
+            primary: 'rgba(100, 100, 100, 0.6)',
           },
         })}
       />

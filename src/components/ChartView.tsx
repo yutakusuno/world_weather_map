@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { initDisplayData, collectChartData } from "./WeatherForecast";
-import type { HourlyData, CurrentData } from "./WeatherForecast";
+import { useEffect, useState } from 'react';
+import { initDisplayData, collectChartData } from './WeatherForecast';
 import {
   Chart as ChartJS,
   LinearScale,
@@ -12,10 +11,11 @@ import {
   Tooltip,
   LineController,
   BarController,
-} from "chart.js";
-import { Chart } from "react-chartjs-2";
-import "./ChartView.css";
-import { TimezonePicker } from "./TimezonePicker";
+} from 'chart.js';
+import { Chart } from 'react-chartjs-2';
+import './ChartView.css';
+import { TimezonePicker } from './TimezonePicker';
+import { CurrentData, HourlyData } from '../types/open-meteo';
 
 ChartJS.register(
   LinearScale,
@@ -29,10 +29,13 @@ ChartJS.register(
   BarController
 );
 
-export const ChartView: React.FC<{
+export const ChartView = ({
+  resData,
+  openMeteoForecastData,
+}: {
   resData: any;
   openMeteoForecastData: any;
-}> = ({ resData, openMeteoForecastData }) => {
+}) => {
   const [chartData, setChartData] = useState<{
     dailyData: { [key: string]: HourlyData };
     currentData: CurrentData;
@@ -41,7 +44,7 @@ export const ChartView: React.FC<{
   const [dateIdx, setDateIdx] = useState<number>(0);
 
   const handleClick = (idx: number) => {
-    if (chartData) setDisplayData(Object.values(chartData["dailyData"])[idx]);
+    if (chartData) setDisplayData(Object.values(chartData['dailyData'])[idx]);
     setDateIdx(idx);
   };
 
@@ -55,28 +58,28 @@ export const ChartView: React.FC<{
 
   useEffect(() => {
     if (chartData) {
-      setDisplayData(Object.values(chartData["dailyData"])[0]);
+      setDisplayData(Object.values(chartData['dailyData'])[0]);
       setDateIdx(0);
     }
   }, [chartData]);
 
   return (
     <>
-      <div id="dateSelector" className="flex justify-normal">
+      <div id='dateSelector' className='flex justify-normal'>
         {chartData
-          ? Object.keys(chartData["dailyData"]).map((val, idx) => {
+          ? Object.keys(chartData['dailyData']).map((val, idx) => {
               return (
                 <button key={idx}>
                   <input
-                    className="hidden"
-                    type="radio"
+                    className='hidden'
+                    type='radio'
                     id={val}
-                    name="weather"
+                    name='weather'
                     checked={dateIdx === idx}
                     onChange={() => handleClick(idx)}
                   />
                   <label
-                    className="py-3 mx-1 text-lg font-bold text-white px-4 bg-zinc-800 hover:bg-black opacity-70 cursor-pointer"
+                    className='py-3 mx-1 text-lg font-bold text-white px-4 bg-zinc-800 hover:bg-black opacity-70 cursor-pointer'
                     htmlFor={val}
                   >
                     {val}
@@ -84,48 +87,48 @@ export const ChartView: React.FC<{
                 </button>
               );
             })
-          : ""}
+          : ''}
       </div>
       <div
-        id="lineChart"
-        className="grid grid-cols-12 gap-4 text-white text-lg font-bold"
+        id='lineChart'
+        className='grid grid-cols-12 gap-4 text-white text-lg font-bold'
       >
-        <div className="col-span-2">
-          <div className="grid grid-rows-3 grid-flow-col">
+        <div className='col-span-2'>
+          <div className='grid grid-rows-3 grid-flow-col'>
             <div>
-              <div className="text-3xl">
-                Now{" "}
-                {chartData ? `${chartData["currentData"]["temperature"]}℃` : ""}
+              <div className='text-3xl'>
+                Now{' '}
+                {chartData ? `${chartData['currentData']['temperature']}℃` : ''}
               </div>
-              {chartData ? chartData["currentData"]["weather"] : ""}
+              {chartData ? chartData['currentData']['weather'] : ''}
             </div>
-            <div>{chartData ? chartData["currentData"]["time"] : ""}</div>
+            <div>{chartData ? chartData['currentData']['time'] : ''}</div>
             <TimezonePicker openMeteoForecastData={openMeteoForecastData} />
           </div>
         </div>
-        <div className="col-span-10">
+        <div className='col-span-10'>
           <Chart
-            type="bar"
+            type='bar'
             data={{
-              labels: displayData["hourlyTime"],
+              labels: displayData['hourlyTime'],
               datasets: [
                 {
-                  type: "line" as const,
+                  type: 'line' as const,
                   label: `Temperature`,
-                  backgroundColor: "#67d574",
-                  borderColor: "#67d574",
-                  pointBackgroundColor: "#67d574",
-                  pointBorderColor: "#67d574",
-                  data: displayData["hourlyTemperature"],
-                  yAxisID: "y",
+                  backgroundColor: '#67d574',
+                  borderColor: '#67d574',
+                  pointBackgroundColor: '#67d574',
+                  pointBorderColor: '#67d574',
+                  data: displayData['hourlyTemperature'],
+                  yAxisID: 'y',
                 },
                 {
-                  type: "bar" as const,
+                  type: 'bar' as const,
                   label: `Precipitation`,
-                  backgroundColor: "#648bff",
-                  borderColor: "#648bff",
-                  data: displayData["hourlyPrecipitationProbability"],
-                  yAxisID: "y1",
+                  backgroundColor: '#648bff',
+                  borderColor: '#648bff',
+                  data: displayData['hourlyPrecipitationProbability'],
+                  yAxisID: 'y1',
                 },
               ],
             }}
@@ -135,10 +138,10 @@ export const ChartView: React.FC<{
                 // https://www.chartjs.org/docs/master/configuration/legend.html
                 legend: {
                   labels: {
-                    color: "#ffffff",
+                    color: '#ffffff',
                     font: {
                       size: 15,
-                      weight: "bold",
+                      weight: 'bold',
                     },
                   },
                 },
@@ -146,20 +149,20 @@ export const ChartView: React.FC<{
               scales: {
                 x: {
                   ticks: {
-                    color: "#ffffff",
+                    color: '#ffffff',
                     font: {
                       size: 15,
-                      weight: "bold",
+                      weight: 'bold',
                     },
                   },
                 },
                 y: {
-                  position: "left" as const,
+                  position: 'left' as const,
                   ticks: {
-                    color: "#ffffff",
+                    color: '#ffffff',
                     font: {
                       size: 15,
-                      weight: "bold",
+                      weight: 'bold',
                     },
                     callback: function (value) {
                       return `${value}℃`;
@@ -167,12 +170,12 @@ export const ChartView: React.FC<{
                   },
                 },
                 y1: {
-                  position: "right" as const,
+                  position: 'right' as const,
                   ticks: {
-                    color: "#ffffff",
+                    color: '#ffffff',
                     font: {
                       size: 15,
-                      weight: "bold",
+                      weight: 'bold',
                     },
                     callback: function (value) {
                       return `${value}mm`;

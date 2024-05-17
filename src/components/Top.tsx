@@ -1,20 +1,13 @@
-import React, { useState } from "react";
-import { initPoint, MapBox } from "./MapBox";
-import { ChartView } from "./ChartView";
-import { initResData, openMeteoApiCall } from "./WeatherForecast";
-import type { ResData } from "./WeatherForecast";
-import { initTimezone } from "./TimezonePicker";
+import { useState } from 'react';
+import { initPoint, MapBox } from './MapBox';
+import { ChartView } from './ChartView';
+import { initResData } from './WeatherForecast';
+import { initTimezone } from './TimezonePicker';
+import { Point } from '../types/types';
+import { getWeatherForecastData } from '../api/open-meteo';
+import { ResData } from '../types/open-meteo';
 
-export type Point = {
-  lat: number;
-  lng: number;
-};
-
-export interface IsOpenMeteoForecastData {
-  openMeteoForecastData(point: Point, timezone: string | undefined): void;
-}
-
-export const MapView: React.FC = () => {
+export const MapView = () => {
   const [resData, setResData] = useState<ResData>(initResData);
   const [lat, setLat] = useState<number>(initPoint.lat);
   const [lng, setLng] = useState<number>(initPoint.lng);
@@ -33,7 +26,10 @@ export const MapView: React.FC = () => {
     }
     if (tz) lastTimezone = tz;
 
-    const data = openMeteoApiCall({ lat: lastLat, lng: lastLng }, lastTimezone);
+    const data = getWeatherForecastData(
+      { lat: lastLat, lng: lastLng },
+      lastTimezone
+    );
     setResData(await data);
     setLat(lastLat);
     setLng(lastLng);
