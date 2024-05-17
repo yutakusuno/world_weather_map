@@ -1,6 +1,6 @@
 import { CurrentData, HourlyData, ResData } from '../types/open-meteo';
-import { getDayAbbreviation, getMonthAbbreviation } from '../utils/date';
-import { getDescriptionFromWeatherCode } from '../utils/open-meteo';
+import { getDayAbbreviation, getMonthAbbreviation } from './date';
+import { getDescriptionFromWeatherCode } from './open-meteo';
 
 export const collectChartData = (data: ResData) => {
   let date: number = 99;

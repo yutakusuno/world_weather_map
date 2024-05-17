@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { initPoint, MapBox } from './MapBox';
-import { ChartView } from './ChartView';
-import { initTimezone } from './TimezonePicker';
+import { initPoint, MapBox } from './map-box';
+import { ChartView } from './chart-view';
+import { initTimezone } from './timezone-picker';
 import { Point } from '../types/types';
 import { getWeatherForecastData } from '../api/open-meteo';
 import { ResData } from '../types/open-meteo';
