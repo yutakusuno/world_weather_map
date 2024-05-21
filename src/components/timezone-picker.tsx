@@ -38,11 +38,13 @@ export const TimezonePicker = ({
         styles={{
           option: (defaultStyles, state) => ({
             ...defaultStyles,
-            color: 'white',
+            color: state.isFocused || state.isSelected ? '#0F172A' : '#ffffff',
+            backgroundColor:
+              state.isFocused || state.isSelected ? '#ffffff' : '#0F172A',
           }),
           control: (defaultStyles) => ({
             ...defaultStyles,
-            backgroundColor: '#2e2e2e',
+            backgroundColor: '#0F172A',
             padding: '0px',
             border: 'none',
             boxShadow: 'none',
@@ -51,7 +53,7 @@ export const TimezonePicker = ({
           }),
           menu: (defaultStyles) => ({
             ...defaultStyles,
-            backgroundColor: '#2e2e2e',
+            backgroundColor: '#0F172A',
             opacity: '0.9',
           }),
           singleValue: (defaultStyles) => ({
@@ -59,15 +61,6 @@ export const TimezonePicker = ({
             color: '#ffffff',
           }),
         }}
-        theme={(theme) => ({
-          ...theme,
-          borderRadius: 0,
-          colors: {
-            ...theme.colors,
-            primary25: '#bebebe',
-            primary: '#646464',
-          },
-        })}
       />
     </div>
   );

@@ -56,5 +56,6 @@ npm start
 
 ## TODO
 
-- Responsive design on mobile screens
 - More selectable time zones
+- Locate the User's Position using Geolocation API
+- Responsive design on mobile screens

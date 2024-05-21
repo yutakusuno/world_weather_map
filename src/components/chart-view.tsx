@@ -88,8 +88,8 @@ export const ChartView = ({
                 return (
                   <button
                     key={idx}
-                    className={`py-1 mx-1 bg-zinc-800 opacity-70 hover:bg-black ${
-                      selectedDateIdx === idx ? 'bg-black' : ''
+                    className={`py-1 mx-1 hover:bg-slate-900 bg-slate-900 ${
+                      selectedDateIdx === idx ? '' : 'bg-opacity-60'
                     }`}
                     onClick={() => handleDateSelectionClick(idx)}
                   >
