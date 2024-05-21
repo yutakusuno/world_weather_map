@@ -35,7 +35,7 @@ export type WeatherForecastDataType = {
   current_weather: CurrentWeather;
 };
 
-export type HourlyWeatherForecastData = {
+export type HourlyWeatherForecastDataType = {
   hourlyTime: string[];
   hourlyTemperature: number[];
   hourlyRelativeHumidity: number[];
@@ -43,7 +43,7 @@ export type HourlyWeatherForecastData = {
   hourlyWeatherCode: number[];
 };
 
-export type CurrentWeatherData = {
+export type CurrentWeatherDataType = {
   time: string;
   temperature: number;
   weather: string;
@@ -55,6 +55,6 @@ export type WeatherCodeDescription = {
 };
 
 export type WeatherDataForChartType = {
-  dailyWeatherData: { [key: string]: HourlyWeatherForecastData };
-  currentWeatherData: CurrentWeatherData;
+  dailyWeatherData: { [key: string]: HourlyWeatherForecastDataType };
+  currentWeatherData: CurrentWeatherDataType;
 };

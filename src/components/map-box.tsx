@@ -6,8 +6,8 @@ import Map, {
   NavigationControl,
   Source,
 } from 'react-map-gl';
-import type { RasterLayer, MapLayerMouseEvent } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import type { RasterLayer, MapLayerMouseEvent } from 'react-map-gl';
 
 import { getRainRadarData } from '../api/rainviewer';
 import { MAPBOX_ACCESS_TOKEN } from '../constants';
@@ -44,15 +44,21 @@ export const MapBox = ({
   };
 
   useEffect(() => {
-    const setWeatherMapData = async () => {
+    let ignore = false;
+
+    const initRainViewerData = async () => {
       const data = await getRainRadarData();
 
-      setRainViewerData(data);
-      handleUpdateWeatherForecast(latLng, undefined);
+      if (!ignore) {
+        setRainViewerData(data);
+      }
     };
 
-    setWeatherMapData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    initRainViewerData();
+
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   // TODO Check the rain radar layers whether it displays correctly or not

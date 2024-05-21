@@ -23,35 +23,44 @@ export const MapView = () => {
     point: Point,
     tz: string | undefined
   ): Promise<void> => {
-    let [lastLat, lastLng] = [point.lat, point.lng];
-    let lastTimezone = timezone;
+    let [currentLat, currentLng] = [point.lat, point.lng];
+    let currentTimezone = timezone;
 
-    if (lastLat === 0 && lastLng === 0) {
-      lastLat = latLng.lat;
-      lastLng = latLng.lng;
+    if (currentLat === 0 && currentLng === 0) {
+      currentLat = latLng.lat;
+      currentLng = latLng.lng;
     }
 
     if (tz) {
-      lastTimezone = tz;
+      currentTimezone = tz;
     }
 
     const data = await getWeatherForecastData(
-      { lat: lastLat, lng: lastLng },
-      lastTimezone
+      { lat: currentLat, lng: currentLng },
+      currentTimezone
     );
 
     setWeatherForecastData(data);
-    setLatLng({ lat: lastLat, lng: lastLng });
-    setTimezone(lastTimezone);
+    setLatLng({ lat: currentLat, lng: currentLng });
+    setTimezone(currentTimezone);
   };
 
   useEffect(() => {
-    async function initWeatherForecastData() {
+    let ignore = false;
+
+    const initWeatherForecastData = async () => {
       const data = await getWeatherForecastData(initPoint, timezones[0].value);
-      setWeatherForecastData(data);
-    }
+
+      if (!ignore) {
+        setWeatherForecastData(data);
+      }
+    };
 
     initWeatherForecastData();
+
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   return (
@@ -67,9 +76,3 @@ export const MapView = () => {
     </>
   );
 };
-
-// What I want to implement
-// Install buttons
-// To animate a rain radar,
-// To switch map styles,
-// To hide a chart view,

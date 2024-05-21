@@ -17,7 +17,7 @@ import { TimezonePicker } from './timezone-picker';
 import { collectWeatherDataForChart } from '../utils/chart';
 import { HandleUpdateWeatherForecast } from '../types/types';
 import {
-  HourlyWeatherForecastData,
+  HourlyWeatherForecastDataType,
   WeatherDataForChartType,
   WeatherForecastDataType,
 } from '../types/open-meteo';
@@ -48,16 +48,16 @@ export const ChartView = ({
     WeatherDataForChartType | undefined
   >(undefined);
   const [weatherDataOnChart, setWeatherDataOnChart] = useState<
-    HourlyWeatherForecastData | undefined
+    HourlyWeatherForecastDataType | undefined
   >(undefined);
-  const [dateIdx, setDateIdx] = useState<number>(0);
+  const [selectedDateIdx, setSelectedDateIdx] = useState<number>(0);
 
   const handleDateSelectionClick = (idx: number) => {
     if (weatherDataForChart) {
       setWeatherDataOnChart(
         Object.values(weatherDataForChart['dailyWeatherData'])[idx]
       );
-      setDateIdx(idx);
+      setSelectedDateIdx(idx);
     }
   };
 
@@ -76,7 +76,7 @@ export const ChartView = ({
       setWeatherDataOnChart(
         Object.values(weatherDataForChart['dailyWeatherData'])[0]
       );
-      setDateIdx(0);
+      setSelectedDateIdx(0);
     }
   }, [weatherDataForChart]);
 
@@ -93,7 +93,7 @@ export const ChartView = ({
                       type='radio'
                       id={val}
                       name='weather'
-                      checked={dateIdx === idx}
+                      checked={selectedDateIdx === idx}
                       onChange={() => handleDateSelectionClick(idx)}
                     />
                     <label

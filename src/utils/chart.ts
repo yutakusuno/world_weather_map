@@ -1,11 +1,11 @@
+import { getDayAbbreviation, getMonthAbbreviation } from './date';
+import { getDescriptionFromWeatherCode } from './open-meteo';
 import {
-  CurrentWeatherData,
-  HourlyWeatherForecastData,
+  CurrentWeatherDataType,
+  HourlyWeatherForecastDataType,
   WeatherDataForChartType,
   WeatherForecastDataType,
 } from '../types/open-meteo';
-import { getDayAbbreviation, getMonthAbbreviation } from './date';
-import { getDescriptionFromWeatherCode } from './open-meteo';
 
 export const collectWeatherDataForChart = (
   data: WeatherForecastDataType
@@ -14,7 +14,7 @@ export const collectWeatherDataForChart = (
   let month: number = 99;
   let day: number = 99;
   let dateIndies: { [key: string]: number } = {};
-  let dailyWeatherData: { [key: string]: HourlyWeatherForecastData } = {};
+  let dailyWeatherData: { [key: string]: HourlyWeatherForecastDataType } = {};
 
   // dailyWeatherData: an associative array to collect daily data
   data['hourly']['time'].forEach((val, idx, _) => {
@@ -105,7 +105,7 @@ export const collectWeatherDataForChart = (
     hour: 'numeric',
   });
 
-  const currentWeatherData: CurrentWeatherData = {
+  const currentWeatherData: CurrentWeatherDataType = {
     time: `${getDayAbbreviation(day)} ${getMonthAbbreviation(
       month
     )} ${date}, ${time}`,

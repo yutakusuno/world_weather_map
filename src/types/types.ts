@@ -12,7 +12,3 @@ export type Timezone = {
   label: string;
   value: string;
 };
-
-export type ArrayObjectSelectState = {
-  selectedTimezone: Timezone | null;
-};

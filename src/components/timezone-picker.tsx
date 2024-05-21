@@ -1,10 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Select from 'react-select';
-import {
-  ArrayObjectSelectState,
-  Timezone,
-  HandleUpdateWeatherForecast,
-} from '../types/types';
+
+import { Timezone, HandleUpdateWeatherForecast } from '../types/types';
 import { timezones } from '../utils/date';
 
 type TimezonePickerProps = {
@@ -14,32 +11,24 @@ type TimezonePickerProps = {
 export const TimezonePicker = ({
   handleUpdateWeatherForecast,
 }: TimezonePickerProps) => {
-  // I changed the position of the state here, that's how you should use the state in react
-  // https://reactjs.org/docs/hooks-state.html#declaring-a-state-variable
-
-  // If you don't need a state you can remove the following line
-  const [state, setState] = useState<ArrayObjectSelectState>({
-    selectedTimezone: timezones[0],
-  });
-
-  useEffect(() => {
-    handleUpdateWeatherForecast(
-      { lat: 0, lng: 0 },
-      state.selectedTimezone?.value
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state]);
+  const [selectedTimezone, setSelectedTimezone] = useState<Timezone>(
+    timezones[0]
+  );
 
   return (
     <div className='timezone-picker'>
       <div>Time zone:</div>
       <Select
-        // If you don't need a state you can remove the two following lines value & onChange
-        value={state.selectedTimezone}
-        onChange={(option: Timezone | null) => {
-          setState({ selectedTimezone: option });
+        value={selectedTimezone}
+        onChange={(timeZone: Timezone | null) => {
+          if (timeZone) {
+            setSelectedTimezone(timeZone);
+
+            // When passing 0,0, as we manage the state of current location, it just goes fetching weather data of with the selected timezone, the current location
+            handleUpdateWeatherForecast({ lat: 0, lng: 0 }, timeZone.value);
+          }
         }}
-        // defaultValue={timezones[0]}
+        defaultValue={selectedTimezone}
         getOptionLabel={(timezone: Timezone) => timezone.label}
         getOptionValue={(timezone: Timezone) => timezone.value}
         options={timezones}
