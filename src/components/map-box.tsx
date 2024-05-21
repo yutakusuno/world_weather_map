@@ -14,7 +14,7 @@ import { MAPBOX_ACCESS_TOKEN } from '../constants';
 import { RainViewerDataType } from '../types/rainviewer';
 import { HandleUpdateWeatherForecast, Point } from '../types/types';
 
-const rasterOpacity = 0.5;
+const rasterOpacity = 0.4;
 
 const initCustomLayer: RasterLayer[] = [
   {

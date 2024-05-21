@@ -38,15 +38,19 @@ export const TimezonePicker = ({
         styles={{
           option: (defaultStyles, state) => ({
             ...defaultStyles,
-            color: '#000000',
-            opacity: 0.8,
+            color: 'white',
           }),
           control: (defaultStyles) => ({
             ...defaultStyles,
-            backgroundColor: 'rgba(42, 39, 39, 0.6)',
+            backgroundColor: '#2d2d2d',
             padding: '0px',
             border: 'none',
             boxShadow: 'none',
+            cursor: 'pointer',
+          }),
+          menu: (defaultStyles) => ({
+            ...defaultStyles,
+            backgroundColor: '#2d2d2d',
           }),
           singleValue: (defaultStyles) => ({
             ...defaultStyles,
@@ -58,8 +62,8 @@ export const TimezonePicker = ({
           borderRadius: 0,
           colors: {
             ...theme.colors,
-            primary25: 'rgba(200, 200, 200, 0.6)',
-            primary: 'rgba(100, 100, 100, 0.6)',
+            primary25: '#C8C8C8',
+            primary: '#646464',
           },
         })}
       />

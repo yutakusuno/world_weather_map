@@ -21,7 +21,6 @@ import {
   WeatherDataForChartType,
   WeatherForecastDataType,
 } from '../types/open-meteo';
-import './chart-view.css';
 
 ChartJS.register(
   LinearScale,
@@ -69,7 +68,6 @@ export const ChartView = ({
     };
 
     setWeatherDataForChart(weatherData);
-    console.log('weatherData', weatherData);
   }, [weatherForecastData]);
 
   useEffect(() => {
@@ -83,22 +81,26 @@ export const ChartView = ({
 
   return (
     <>
-      <div id='dateSelector' className='flex justify-normal'>
+      <div className='flex justify-normal fixed left-0 bottom-[288px]'>
         {weatherDataForChart
           ? Object.keys(weatherDataForChart['dailyWeatherData']).map(
               (val, idx) => {
                 return (
-                  <button key={idx}>
+                  <button
+                    key={idx}
+                    className={`py-1 mx-1 bg-zinc-800 opacity-70 hover:bg-black ${
+                      selectedDateIdx === idx ? 'bg-black' : ''
+                    }`}
+                    onClick={() => handleDateSelectionClick(idx)}
+                  >
                     <input
                       className='hidden'
                       type='radio'
                       id={val}
                       name='weather'
-                      checked={selectedDateIdx === idx}
-                      onChange={() => handleDateSelectionClick(idx)}
                     />
                     <label
-                      className='py-3 mx-1 text-lg font-bold text-white px-4 bg-zinc-800 hover:bg-black opacity-70 cursor-pointer'
+                      className='text-white px-4 cursor-pointer'
                       htmlFor={val}
                     >
                       {val}
@@ -109,10 +111,7 @@ export const ChartView = ({
             )
           : ''}
       </div>
-      <div
-        id='lineChart'
-        className='grid grid-cols-12 gap-4 text-white text-lg font-bold'
-      >
+      <div className='grid grid-cols-12 gap-4 text-white text-lg fixed p-4 w-full left-0 bottom-0 h-72 bg-slate-900 bg-opacity-60'>
         <div className='col-span-2'>
           <div className='grid grid-rows-3 grid-flow-col'>
             <div>
@@ -146,18 +145,18 @@ export const ChartView = ({
                   {
                     type: 'line' as const,
                     label: `Temperature`,
-                    backgroundColor: '#67d574',
-                    borderColor: '#67d574',
-                    pointBackgroundColor: '#67d574',
-                    pointBorderColor: '#67d574',
+                    backgroundColor: '#95C21D',
+                    borderColor: '#95C21D',
+                    pointBackgroundColor: '#95C21D',
+                    pointBorderColor: '#95C21D',
                     data: weatherDataOnChart['hourlyTemperature'],
                     yAxisID: 'y',
                   },
                   {
                     type: 'bar' as const,
                     label: `Precipitation`,
-                    backgroundColor: '#648bff',
-                    borderColor: '#648bff',
+                    backgroundColor: '#4ba7eb',
+                    borderColor: '#4ba7eb',
                     data: weatherDataOnChart['hourlyPrecipitationProbability'],
                     yAxisID: 'y1',
                   },
@@ -183,7 +182,6 @@ export const ChartView = ({
                       color: '#ffffff',
                       font: {
                         size: 15,
-                        weight: 'bold',
                       },
                     },
                   },
@@ -193,7 +191,6 @@ export const ChartView = ({
                       color: '#ffffff',
                       font: {
                         size: 15,
-                        weight: 'bold',
                       },
                       callback: function (value) {
                         return `${value}℃`;
@@ -206,7 +203,6 @@ export const ChartView = ({
                       color: '#ffffff',
                       font: {
                         size: 15,
-                        weight: 'bold',
                       },
                       callback: function (value) {
                         return `${value}mm`;

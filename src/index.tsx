@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import { MapView } from './components/map-view';
 import reportWebVitals from './reportWebVitals';
+import App from './App';
+import './index.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -10,7 +10,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <MapView />
+    <App />
   </React.StrictMode>
 );
 
