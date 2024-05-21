@@ -35,13 +35,15 @@ ChartJS.register(
   BarController
 );
 
+type ChartViewProps = {
+  weatherForecastData: WeatherForecastDataType | undefined;
+  handleUpdateWeatherForecast: HandleUpdateWeatherForecast;
+};
+
 export const ChartView = ({
   weatherForecastData,
   handleUpdateWeatherForecast,
-}: {
-  weatherForecastData: WeatherForecastDataType | undefined;
-  handleUpdateWeatherForecast: HandleUpdateWeatherForecast['handleUpdateWeatherForecast'];
-}) => {
+}: ChartViewProps) => {
   const [weatherDataForChart, setWeatherDataForChart] = useState<
     WeatherDataForChartType | undefined
   >(undefined);

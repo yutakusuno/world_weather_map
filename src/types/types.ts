@@ -3,12 +3,10 @@ export type Point = {
   lng: number;
 };
 
-export type HandleUpdateWeatherForecast = {
-  handleUpdateWeatherForecast: (
-    point: Point,
-    timezone: string | undefined
-  ) => Promise<void>;
-};
+export type HandleUpdateWeatherForecast = (
+  point: Point,
+  timezone: string | undefined
+) => Promise<void>;
 
 export type Timezone = {
   label: string;

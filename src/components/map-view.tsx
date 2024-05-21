@@ -1,18 +1,23 @@
 import { useEffect, useState } from 'react';
 
-import { initPoint, MapBox } from './map-box';
+import { MapBox } from './map-box';
 import { ChartView } from './chart-view';
 import { getWeatherForecastData } from '../api/open-meteo';
 import { Point } from '../types/types';
 import { WeatherForecastDataType } from '../types/open-meteo';
 import { timezones } from '../utils/date';
 
+const initPoint: Point = {
+  lat: 49.246292,
+  lng: -123.116226,
+};
+
 export const MapView = () => {
+  const [latLng, setLatLng] = useState<Point>(initPoint);
+  const [timezone, setTimezone] = useState<string>(timezones[0].value);
   const [weatherForecastData, setWeatherForecastData] = useState<
     WeatherForecastDataType | undefined
   >(undefined);
-  const [latLng, setLatLng] = useState<Point>(initPoint);
-  const [timezone, setTimezone] = useState<string>(timezones[0].value);
 
   const handleUpdateWeatherForecast = async (
     point: Point,
@@ -51,7 +56,10 @@ export const MapView = () => {
 
   return (
     <>
-      <MapBox handleUpdateWeatherForecast={handleUpdateWeatherForecast} />
+      <MapBox
+        latLng={latLng}
+        handleUpdateWeatherForecast={handleUpdateWeatherForecast}
+      />
       <ChartView
         weatherForecastData={weatherForecastData}
         handleUpdateWeatherForecast={handleUpdateWeatherForecast}

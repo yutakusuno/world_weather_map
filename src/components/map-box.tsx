@@ -25,22 +25,21 @@ const initCustomLayer: RasterLayer[] = [
   },
 ];
 
-export const initPoint: Point = {
-  lat: 49.246292,
-  lng: -123.116226,
+type MapBoxProps = {
+  latLng: Point;
+  handleUpdateWeatherForecast: HandleUpdateWeatherForecast;
 };
 
 export const MapBox = ({
+  latLng,
   handleUpdateWeatherForecast,
-}: HandleUpdateWeatherForecast) => {
-  const [latLng, setLatLng] = useState<Point>(initPoint);
+}: MapBoxProps) => {
+  const [layers, setLayers] = useState<RasterLayer[]>(initCustomLayer);
   const [rainViewerData, setRainViewerData] = useState<
     RainViewerDataType | undefined
   >(undefined);
-  const [layers, setLayers] = useState<RasterLayer[]>(initCustomLayer);
 
   const onMapClick = (e: MapLayerMouseEvent) => {
-    setLatLng(e.lngLat);
     handleUpdateWeatherForecast(e.lngLat, undefined);
   };
 
@@ -49,7 +48,7 @@ export const MapBox = ({
       const data = await getRainRadarData();
 
       setRainViewerData(data);
-      handleUpdateWeatherForecast(initPoint, undefined);
+      handleUpdateWeatherForecast(latLng, undefined);
     };
 
     setWeatherMapData();
@@ -83,8 +82,8 @@ export const MapBox = ({
       mapLib={import('mapbox-gl')}
       mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
       initialViewState={{
-        latitude: initPoint.lat,
-        longitude: initPoint.lng,
+        latitude: latLng.lat,
+        longitude: latLng.lng,
         zoom: 9,
       }}
       style={{ width: '100vw', height: '100vh' }}

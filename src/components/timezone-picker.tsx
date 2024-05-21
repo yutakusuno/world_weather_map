@@ -7,9 +7,13 @@ import {
 } from '../types/types';
 import { timezones } from '../utils/date';
 
+type TimezonePickerProps = {
+  handleUpdateWeatherForecast: HandleUpdateWeatherForecast;
+};
+
 export const TimezonePicker = ({
   handleUpdateWeatherForecast,
-}: HandleUpdateWeatherForecast) => {
+}: TimezonePickerProps) => {
   // I changed the position of the state here, that's how you should use the state in react
   // https://reactjs.org/docs/hooks-state.html#declaring-a-state-variable
 
