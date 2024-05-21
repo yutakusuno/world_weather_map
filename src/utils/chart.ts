@@ -2,32 +2,44 @@ import { getDayAbbreviation, getMonthAbbreviation } from './date';
 import { getDescriptionFromWeatherCode } from './open-meteo';
 import {
   CurrentWeatherDataType,
-  HourlyWeatherForecastDataType,
+  DailyWeatherDataType,
   WeatherDataForChartType,
   WeatherForecastDataType,
 } from '../types/open-meteo';
 
 export const collectWeatherDataForChart = (
-  data: WeatherForecastDataType
+  weatherForecastData: WeatherForecastDataType
 ): WeatherDataForChartType => {
-  let date: number = 99;
-  let month: number = 99;
-  let day: number = 99;
-  let dateIndies: { [key: string]: number } = {};
-  let dailyWeatherData: { [key: string]: HourlyWeatherForecastDataType } = {};
+  return {
+    dailyWeatherData: getDailyWeatherData(weatherForecastData),
+    currentWeatherData: getCurrentWeatherData(weatherForecastData),
+  };
+};
 
-  // dailyWeatherData: an associative array to collect daily data
-  data['hourly']['time'].forEach((val, idx, _) => {
+const getDailyWeatherData = (
+  weatherForecastData: WeatherForecastDataType
+): DailyWeatherDataType => {
+  const monthDateToLastIndex: { [key: string]: number } = {};
+  const dailyWeatherData: DailyWeatherDataType = {};
+
+  // Initialize dailyWeatherData
+  weatherForecastData['hourly']['time'].forEach((val, idx, _) => {
     const dateAndTime = new Date(val);
+    const day = dateAndTime.getDay();
+    const date = dateAndTime.getDate();
+    const month = dateAndTime.getMonth();
+    const hourLabel = dateAndTime.toLocaleTimeString([], {
+      hour: 'numeric',
+    }); // '12 AM'
+    const monthDate =
+      getDayAbbreviation(day) +
+      ' ' +
+      getMonthAbbreviation(month) +
+      ' ' +
+      String(date); // 'Sun Jan 1'
 
-    if (day !== dateAndTime.getDay()) day = dateAndTime.getDay();
-    if (date !== dateAndTime.getDate()) date = dateAndTime.getDate();
-    if (month !== dateAndTime.getMonth()) month = dateAndTime.getMonth();
-
-    const monthDate = `${getDayAbbreviation(day)} ${getMonthAbbreviation(
-      month
-    )} ${date}`;
-    if (dailyWeatherData[monthDate] === undefined)
+    // Initialize dailyWeatherData for each day
+    if (dailyWeatherData[monthDate] === undefined) {
       dailyWeatherData[monthDate] = {
         hourlyTime: [],
         hourlyTemperature: [],
@@ -35,88 +47,72 @@ export const collectWeatherDataForChart = (
         hourlyPrecipitationProbability: [],
         hourlyWeatherCode: [],
       };
-    dailyWeatherData[monthDate]['hourlyTime'].push(
-      dateAndTime.toLocaleTimeString([], {
-        hour: 'numeric',
-      })
+    }
+
+    // Add hourlyTime (1 AM, 2 AM ...) to dailyWeatherData
+    dailyWeatherData[monthDate]['hourlyTime'].push(hourLabel);
+    monthDateToLastIndex[monthDate] = idx;
+  });
+
+  // Decides the range of hourly data for each day
+  let currentIndex: number = 0;
+
+  // Assign hourly data to dailyWeatherData
+  Object.keys(monthDateToLastIndex).forEach((monthDate: string) => {
+    dailyWeatherData[monthDate]['hourlyTemperature'] = weatherForecastData[
+      'hourly'
+    ]['temperature_2m'].slice(
+      currentIndex,
+      monthDateToLastIndex[monthDate] + 1
     );
 
-    dateIndies[monthDate] = idx;
+    dailyWeatherData[monthDate]['hourlyRelativeHumidity'] = weatherForecastData[
+      'hourly'
+    ]['relativehumidity_2m'].slice(
+      currentIndex,
+      monthDateToLastIndex[monthDate] + 1
+    );
+
+    dailyWeatherData[monthDate]['hourlyPrecipitationProbability'] =
+      weatherForecastData['hourly']['precipitation_probability'].slice(
+        currentIndex,
+        monthDateToLastIndex[monthDate] + 1
+      );
+
+    dailyWeatherData[monthDate]['hourlyWeatherCode'] = weatherForecastData[
+      'hourly'
+    ]['weathercode'].slice(currentIndex, monthDateToLastIndex[monthDate] + 1);
+
+    currentIndex = monthDateToLastIndex[monthDate] + 1;
   });
 
-  // flags to specify daily data
-  const monthDateList = Object.keys(dateIndies);
-  const lastIndexEachMonthDate = Object.values(dateIndies);
-  let lastIndex: number = 0;
+  return dailyWeatherData;
+};
 
-  // divide hourly data into daily data
-  // [[15.6, 15.4, ...], [15.6, 15.4, ...], ...]
-  const hourlyTemperatureGroupByDate = lastIndexEachMonthDate.map(
-    (val, idx) => {
-      const start = idx === 0 ? idx : lastIndex;
-      lastIndex = val;
-      return data['hourly']['temperature_2m'].slice(start, val + 1);
-    }
-  );
-  const hourlyHumidityGroupByDate = lastIndexEachMonthDate.map((val, idx) => {
-    const start = idx === 0 ? idx : lastIndex;
-    lastIndex = val;
-    return data['hourly']['relativehumidity_2m'].slice(start, val + 1);
-  });
-  const hourlyPrecipitationProbabilityGroupByDate = lastIndexEachMonthDate.map(
-    (val, idx) => {
-      const start = idx === 0 ? idx : lastIndex;
-      lastIndex = val;
-      return data['hourly']['precipitation_probability'].slice(start, val + 1);
-    }
-  );
-  const hourlyWeatherCodeGroupByDate = lastIndexEachMonthDate.map(
-    (val, idx) => {
-      const start = idx === 0 ? idx : lastIndex;
-      lastIndex = val;
-      return data['hourly']['weathercode'].slice(start, val + 1);
-    }
-  );
-
-  // add hourly data to daily data
-  hourlyTemperatureGroupByDate.forEach(
-    (val, idx, _) =>
-      (dailyWeatherData[monthDateList[idx]]['hourlyTemperature'] = val)
-  );
-  hourlyHumidityGroupByDate.forEach(
-    (val, idx, _) =>
-      (dailyWeatherData[monthDateList[idx]]['hourlyRelativeHumidity'] = val)
-  );
-  hourlyPrecipitationProbabilityGroupByDate.forEach(
-    (val, idx, _) =>
-      (dailyWeatherData[monthDateList[idx]]['hourlyPrecipitationProbability'] =
-        val)
-  );
-  hourlyWeatherCodeGroupByDate.forEach(
-    (val, idx, _) =>
-      (dailyWeatherData[monthDateList[idx]]['hourlyWeatherCode'] = val)
-  );
-
-  const dateAndTime = new Date(data['current_weather']['time']);
-  day = dateAndTime.getDay();
-  date = dateAndTime.getDate();
-  month = dateAndTime.getMonth();
-  const time = dateAndTime.toLocaleTimeString([], {
+const getCurrentWeatherData = (
+  weatherForecastData: WeatherForecastDataType
+): CurrentWeatherDataType => {
+  const dateAndTime = new Date(weatherForecastData['current_weather']['time']);
+  const day = dateAndTime.getDay();
+  const date = dateAndTime.getDate();
+  const month = dateAndTime.getMonth();
+  const hourLabel = dateAndTime.toLocaleTimeString([], {
     hour: 'numeric',
   });
-
-  const currentWeatherData: CurrentWeatherDataType = {
-    time: `${getDayAbbreviation(day)} ${getMonthAbbreviation(
-      month
-    )} ${date}, ${time}`,
-    temperature: data['current_weather']['temperature'],
-    weather: getDescriptionFromWeatherCode(
-      data['current_weather']['weathercode']
-    ),
-  };
+  const monthDateHourLabel =
+    getDayAbbreviation(day) +
+    ' ' +
+    getMonthAbbreviation(month) +
+    ' ' +
+    String(date) +
+    ', ' +
+    hourLabel; // 'Sun Jan 1, 12 AM'
 
   return {
-    dailyWeatherData: dailyWeatherData,
-    currentWeatherData: currentWeatherData,
+    time: monthDateHourLabel,
+    temperature: weatherForecastData['current_weather']['temperature'],
+    weather: getDescriptionFromWeatherCode(
+      weatherForecastData['current_weather']['weathercode']
+    ),
   };
 };

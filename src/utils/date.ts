@@ -1,10 +1,10 @@
 import { Timezone } from '../types/types';
 
-export const getDayAbbreviation = (day: number) => {
+export const getDayAbbreviation = (day: number): string => {
   return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day] || '';
 };
 
-export const getMonthAbbreviation = (day: number) => {
+export const getMonthAbbreviation = (day: number): string => {
   return (
     [
       'Jan',

@@ -69,6 +69,7 @@ export const ChartView = ({
     };
 
     setWeatherDataForChart(weatherData);
+    console.log('weatherData', weatherData);
   }, [weatherForecastData]);
 
   useEffect(() => {

@@ -58,3 +58,7 @@ export type WeatherDataForChartType = {
   dailyWeatherData: { [key: string]: HourlyWeatherForecastDataType };
   currentWeatherData: CurrentWeatherDataType;
 };
+
+export type DailyWeatherDataType = {
+  [key: string]: HourlyWeatherForecastDataType;
+};
