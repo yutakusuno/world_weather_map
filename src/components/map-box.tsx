@@ -14,7 +14,7 @@ import { MAPBOX_ACCESS_TOKEN } from '../constants';
 import { RainViewerDataType } from '../types/rainviewer';
 import { HandleUpdateWeatherForecast, Point } from '../types/types';
 
-const rasterOpacity = 0.1;
+const rasterOpacity = 0.5;
 
 const initCustomLayer: RasterLayer[] = [
   {
@@ -61,16 +61,16 @@ export const MapBox = ({
     };
   }, []);
 
-  // TODO Check the rain radar layers whether it displays correctly or not
   useEffect(() => {
     if (rainViewerData === undefined) return;
     if (
       rainViewerData.radar === undefined ||
-      rainViewerData.radar.past === undefined
+      rainViewerData.radar.nowcast === undefined
     )
       return;
 
-    const layerList = rainViewerData.radar.past.map(
+    // Collect forecast (30 minutes)
+    const layerList = rainViewerData.radar.nowcast.map(
       (frame: { path: string }): RasterLayer => {
         return {
           id: `rainviewer_${frame.path}`,
@@ -108,7 +108,7 @@ export const MapBox = ({
             id={val.source}
             type='raster'
             tiles={[
-              `https://tilecache.rainviewer.com${layers[0].source}/256/{z}/{x}/{y}/2/1_1.png`,
+              `https://tilecache.rainviewer.com${layers[0].source}/512/{z}/{x}/{y}/2/1_1.png`,
             ]}
             tileSize={256}
           >
