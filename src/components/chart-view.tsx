@@ -171,7 +171,6 @@ export const ChartView = ({
                       color: '#ffffff',
                       font: {
                         size: 15,
-                        weight: 'bold',
                       },
                     },
                   },

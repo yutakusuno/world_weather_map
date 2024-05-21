@@ -42,15 +42,17 @@ export const TimezonePicker = ({
           }),
           control: (defaultStyles) => ({
             ...defaultStyles,
-            backgroundColor: '#2d2d2d',
+            backgroundColor: '#2e2e2e',
             padding: '0px',
             border: 'none',
             boxShadow: 'none',
             cursor: 'pointer',
+            opacity: '0.9',
           }),
           menu: (defaultStyles) => ({
             ...defaultStyles,
-            backgroundColor: '#2d2d2d',
+            backgroundColor: '#2e2e2e',
+            opacity: '0.9',
           }),
           singleValue: (defaultStyles) => ({
             ...defaultStyles,
@@ -62,7 +64,7 @@ export const TimezonePicker = ({
           borderRadius: 0,
           colors: {
             ...theme.colors,
-            primary25: '#C8C8C8',
+            primary25: '#bebebe',
             primary: '#646464',
           },
         })}

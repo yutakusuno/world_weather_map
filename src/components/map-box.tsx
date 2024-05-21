@@ -98,7 +98,12 @@ export const MapBox = ({
         onMapClick(e);
       }}
     >
-      <Marker latitude={latLng.lat} longitude={latLng.lng} anchor='center' />
+      <Marker
+        latitude={latLng.lat}
+        longitude={latLng.lng}
+        color='red'
+        anchor='center'
+      />
       <FullscreenControl />
       <NavigationControl />
       {layers.map((val: RasterLayer) => {
