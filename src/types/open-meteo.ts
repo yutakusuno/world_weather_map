@@ -1,21 +1,3 @@
-export type weatherCodeDescription = {
-  code: number;
-  description: string;
-};
-
-export type ResData = {
-  latitude: number;
-  longitude: number;
-  elevation: number;
-  generationtime_ms: number;
-  utc_offset_seconds: number;
-  timezone: string;
-  timezone_abbreviation: string;
-  hourly: Hourly;
-  hourly_units: HourlyUnits;
-  current_weather: CurrentWeather;
-};
-
 type CurrentWeather = {
   time: string;
   temperature: number;
@@ -40,7 +22,20 @@ type HourlyUnits = {
   weathercode: string;
 };
 
-export type HourlyData = {
+export type WeatherForecastDataType = {
+  latitude: number;
+  longitude: number;
+  elevation: number;
+  generationtime_ms: number;
+  utc_offset_seconds: number;
+  timezone: string;
+  timezone_abbreviation: string;
+  hourly: Hourly;
+  hourly_units: HourlyUnits;
+  current_weather: CurrentWeather;
+};
+
+export type HourlyWeatherForecastData = {
   hourlyTime: string[];
   hourlyTemperature: number[];
   hourlyRelativeHumidity: number[];
@@ -48,8 +43,18 @@ export type HourlyData = {
   hourlyWeatherCode: number[];
 };
 
-export type CurrentData = {
+export type CurrentWeatherData = {
   time: string;
   temperature: number;
   weather: string;
+};
+
+export type WeatherCodeDescription = {
+  code: number;
+  description: string;
+};
+
+export type WeatherDataForChartType = {
+  dailyWeatherData: { [key: string]: HourlyWeatherForecastData };
+  currentWeatherData: CurrentWeatherData;
 };

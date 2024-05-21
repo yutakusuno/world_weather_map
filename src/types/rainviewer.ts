@@ -17,7 +17,7 @@ type SatelliteInfo = {
   infrared: SatelliteData[];
 };
 
-export type RainViewerData = {
+export type RainViewerDataType = {
   version: string;
   generated: number;
   host: string;

@@ -1,7 +1,7 @@
-import { weatherCodeDescription } from '../types/open-meteo';
+import { WeatherCodeDescription } from '../types/open-meteo';
 
 export const getDescriptionFromWeatherCode = (weatherCode: number) => {
-  const codeDescription: weatherCodeDescription[] = [
+  const codeDescription: WeatherCodeDescription[] = [
     {
       code: 0,
       description: 'Clear sky',
@@ -117,7 +117,7 @@ export const getDescriptionFromWeatherCode = (weatherCode: number) => {
   ];
 
   let index: number = 999;
-  codeDescription.forEach((val: weatherCodeDescription, idx, _) => {
+  codeDescription.forEach((val: WeatherCodeDescription, idx, _) => {
     if (val['code'] === weatherCode) {
       index = idx;
     }

@@ -1,15 +1,22 @@
-import { CurrentData, HourlyData, ResData } from '../types/open-meteo';
+import {
+  CurrentWeatherData,
+  HourlyWeatherForecastData,
+  WeatherDataForChartType,
+  WeatherForecastDataType,
+} from '../types/open-meteo';
 import { getDayAbbreviation, getMonthAbbreviation } from './date';
 import { getDescriptionFromWeatherCode } from './open-meteo';
 
-export const collectChartData = (data: ResData) => {
+export const collectWeatherDataForChart = (
+  data: WeatherForecastDataType
+): WeatherDataForChartType => {
   let date: number = 99;
   let month: number = 99;
   let day: number = 99;
   let dateIndies: { [key: string]: number } = {};
-  let dailyData: { [key: string]: HourlyData } = {};
+  let dailyWeatherData: { [key: string]: HourlyWeatherForecastData } = {};
 
-  // dailyData: an associative array to collect daily data
+  // dailyWeatherData: an associative array to collect daily data
   data['hourly']['time'].forEach((val, idx, _) => {
     const dateAndTime = new Date(val);
 
@@ -20,15 +27,15 @@ export const collectChartData = (data: ResData) => {
     const monthDate = `${getDayAbbreviation(day)} ${getMonthAbbreviation(
       month
     )} ${date}`;
-    if (dailyData[monthDate] === undefined)
-      dailyData[monthDate] = {
+    if (dailyWeatherData[monthDate] === undefined)
+      dailyWeatherData[monthDate] = {
         hourlyTime: [],
         hourlyTemperature: [],
         hourlyRelativeHumidity: [],
         hourlyPrecipitationProbability: [],
         hourlyWeatherCode: [],
       };
-    dailyData[monthDate]['hourlyTime'].push(
+    dailyWeatherData[monthDate]['hourlyTime'].push(
       dateAndTime.toLocaleTimeString([], {
         hour: 'numeric',
       })
@@ -73,18 +80,21 @@ export const collectChartData = (data: ResData) => {
 
   // add hourly data to daily data
   hourlyTemperatureGroupByDate.forEach(
-    (val, idx, _) => (dailyData[monthDateList[idx]]['hourlyTemperature'] = val)
+    (val, idx, _) =>
+      (dailyWeatherData[monthDateList[idx]]['hourlyTemperature'] = val)
   );
   hourlyHumidityGroupByDate.forEach(
     (val, idx, _) =>
-      (dailyData[monthDateList[idx]]['hourlyRelativeHumidity'] = val)
+      (dailyWeatherData[monthDateList[idx]]['hourlyRelativeHumidity'] = val)
   );
   hourlyPrecipitationProbabilityGroupByDate.forEach(
     (val, idx, _) =>
-      (dailyData[monthDateList[idx]]['hourlyPrecipitationProbability'] = val)
+      (dailyWeatherData[monthDateList[idx]]['hourlyPrecipitationProbability'] =
+        val)
   );
   hourlyWeatherCodeGroupByDate.forEach(
-    (val, idx, _) => (dailyData[monthDateList[idx]]['hourlyWeatherCode'] = val)
+    (val, idx, _) =>
+      (dailyWeatherData[monthDateList[idx]]['hourlyWeatherCode'] = val)
   );
 
   const dateAndTime = new Date(data['current_weather']['time']);
@@ -95,7 +105,7 @@ export const collectChartData = (data: ResData) => {
     hour: 'numeric',
   });
 
-  const currentData: CurrentData = {
+  const currentWeatherData: CurrentWeatherData = {
     time: `${getDayAbbreviation(day)} ${getMonthAbbreviation(
       month
     )} ${date}, ${time}`,
@@ -106,7 +116,7 @@ export const collectChartData = (data: ResData) => {
   };
 
   return {
-    dailyData: dailyData,
-    currentData: currentData,
+    dailyWeatherData: dailyWeatherData,
+    currentWeatherData: currentWeatherData,
   };
 };

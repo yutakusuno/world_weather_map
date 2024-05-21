@@ -1,8 +1,8 @@
-import { RainViewerData } from '../types/rainviewer';
+import { RainViewerDataType } from '../types/rainviewer';
 
 // https://www.rainviewer.com/api/weather-maps-api.html
 export const getRainRadarData = async (): Promise<
-  RainViewerData | undefined
+  RainViewerDataType | undefined
 > => {
   try {
     const response = await fetch(

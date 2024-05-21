@@ -5,43 +5,7 @@ import {
   Timezone,
   HandleUpdateWeatherForecast,
 } from '../types/types';
-
-const timezones: Timezone[] = [
-  {
-    label: 'PST',
-    value: 'America/Los_Angeles',
-  },
-  {
-    label: 'CET',
-    value: 'Europe/Paris',
-  },
-  {
-    label: 'CST',
-    value: 'Asia/Shanghai',
-  },
-  {
-    label: 'EDT',
-    value: 'America/New_York',
-  },
-  {
-    label: 'GMT',
-    value: 'Europe/London',
-  },
-  {
-    label: 'JST',
-    value: 'Asia/Tokyo',
-  },
-  {
-    label: 'MSK',
-    value: 'Europe/Moscow',
-  },
-  {
-    label: 'UTC',
-    value: 'UTC',
-  },
-];
-
-export const initTimezone: string = timezones[0].value;
+import { timezones } from '../utils/date';
 
 export const TimezonePicker = ({
   handleUpdateWeatherForecast,

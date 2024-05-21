@@ -11,7 +11,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 import { getRainRadarData } from '../api/rainviewer';
 import { MAPBOX_ACCESS_TOKEN } from '../constants';
-import { RainViewerData } from '../types/rainviewer';
+import { RainViewerDataType } from '../types/rainviewer';
 import { HandleUpdateWeatherForecast, Point } from '../types/types';
 
 const rasterOpacity = 0.1;
@@ -34,7 +34,9 @@ export const MapBox = ({
   handleUpdateWeatherForecast,
 }: HandleUpdateWeatherForecast) => {
   const [latLng, setLatLng] = useState<Point>(initPoint);
-  const [resData, setResData] = useState<RainViewerData | undefined>(undefined);
+  const [rainViewerData, setRainViewerData] = useState<
+    RainViewerDataType | undefined
+  >(undefined);
   const [layers, setLayers] = useState<RasterLayer[]>(initCustomLayer);
 
   const onMapClick = (e: MapLayerMouseEvent) => {
@@ -46,7 +48,7 @@ export const MapBox = ({
     const setWeatherMapData = async () => {
       const data = await getRainRadarData();
 
-      setResData(data);
+      setRainViewerData(data);
       handleUpdateWeatherForecast(initPoint, undefined);
     };
 
@@ -56,10 +58,14 @@ export const MapBox = ({
 
   // TODO Check the rain radar layers whether it displays correctly or not
   useEffect(() => {
-    if (resData === undefined) return;
-    if (resData.radar === undefined || resData.radar.past === undefined) return;
+    if (rainViewerData === undefined) return;
+    if (
+      rainViewerData.radar === undefined ||
+      rainViewerData.radar.past === undefined
+    )
+      return;
 
-    const layerList = resData.radar.past.map(
+    const layerList = rainViewerData.radar.past.map(
       (frame: { path: string }): RasterLayer => {
         return {
           id: `rainviewer_${frame.path}`,
@@ -70,7 +76,7 @@ export const MapBox = ({
       }
     );
     setLayers(layerList);
-  }, [resData]);
+  }, [rainViewerData]);
 
   return (
     <Map
