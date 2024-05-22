@@ -64,7 +64,7 @@ export const MapView = () => {
   }, []);
 
   return (
-    <>
+    <div>
       <MapBox
         latLng={latLng}
         handleUpdateWeatherForecast={handleUpdateWeatherForecast}
@@ -73,6 +73,6 @@ export const MapView = () => {
         weatherForecastData={weatherForecastData}
         handleUpdateWeatherForecast={handleUpdateWeatherForecast}
       />
-    </>
+    </div>
   );
 };

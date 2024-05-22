@@ -6,8 +6,8 @@ import Map, {
   NavigationControl,
   Source,
 } from 'react-map-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
 import type { RasterLayer, MapLayerMouseEvent } from 'react-map-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 import { getRainRadarData } from '../api/rainviewer';
 import { MAPBOX_ACCESS_TOKEN } from '../constants';
@@ -113,7 +113,7 @@ export const MapBox = ({
             id={val.source}
             type='raster'
             tiles={[
-              `https://tilecache.rainviewer.com${layers[0].source}/512/{z}/{x}/{y}/2/1_1.png`,
+              `https://tilecache.rainviewer.com${layers[0].source}/256/{z}/{x}/{y}/2/1_1.png`,
             ]}
             tileSize={256}
           >
