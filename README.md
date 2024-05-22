@@ -17,9 +17,10 @@ The World Weather Map is an interactive web application that allows users to che
   - TypeScript
   - Tailwind CSS
 - Third-Party APIs:
-  - [Mapbox API](https://www.mapbox.com/)
-  - [RainViewer API](https://www.rainviewer.com/)
-  - [Open-Meteo API](https://open-meteo.com/)
+  - [Mapbox](https://www.mapbox.com)
+  - [RainViewer](https://www.rainviewer.com)
+  - [Open-Meteo](https://open-meteo.com)
+  - [Where the ISS at?](https://wheretheiss.at)
 
 ## Quick Start
 
