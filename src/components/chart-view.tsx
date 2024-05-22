@@ -79,12 +79,6 @@ export const ChartView = ({
         Object.values(weatherDataForChart['dailyWeatherData'])[0]
       );
       setSelectedDateIdx(0);
-
-      console.log(
-        "weatherDataForChart['currentWeatherData']['timeZone']",
-        weatherDataForChart['currentWeatherData']['timeZone']
-      );
-
       setSelectedTimezone({
         label: weatherDataForChart['currentWeatherData']['timeZone'],
         value: weatherDataForChart['currentWeatherData']['timeZone'],
