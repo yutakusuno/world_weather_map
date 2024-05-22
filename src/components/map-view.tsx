@@ -5,7 +5,7 @@ import { ChartView } from './chart-view';
 import { getWeatherForecastData } from '../api/open-meteo';
 import { Point } from '../types/types';
 import { WeatherForecastDataType } from '../types/open-meteo';
-import { timezones } from '../utils/date';
+import { defaultTimezone } from '../utils/date';
 
 const initPoint: Point = {
   lat: 49.246292,
@@ -14,7 +14,7 @@ const initPoint: Point = {
 
 export const MapView = () => {
   const [latLng, setLatLng] = useState<Point>(initPoint);
-  const [timezone, setTimezone] = useState<string>(timezones[0].value);
+  const [timezone, setTimezone] = useState<string>(defaultTimezone['value']);
   const [weatherForecastData, setWeatherForecastData] = useState<
     WeatherForecastDataType | undefined
   >(undefined);
@@ -49,7 +49,10 @@ export const MapView = () => {
     let ignore = false;
 
     const initWeatherForecastData = async () => {
-      const data = await getWeatherForecastData(initPoint, timezones[0].value);
+      const data = await getWeatherForecastData(
+        initPoint,
+        defaultTimezone['value']
+      );
 
       if (!ignore) {
         setWeatherForecastData(data);

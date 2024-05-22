@@ -16,15 +16,6 @@ import { HandleUpdateWeatherForecast, Point } from '../types/types';
 
 const rasterOpacity = 0.4;
 
-const initCustomLayer: RasterLayer[] = [
-  {
-    id: 'layer',
-    type: 'raster',
-    source: '',
-    paint: { 'raster-opacity': rasterOpacity },
-  },
-];
-
 type MapBoxProps = {
   latLng: Point;
   handleUpdateWeatherForecast: HandleUpdateWeatherForecast;
@@ -34,7 +25,7 @@ export const MapBox = ({
   latLng,
   handleUpdateWeatherForecast,
 }: MapBoxProps) => {
-  const [layers, setLayers] = useState<RasterLayer[]>(initCustomLayer);
+  const [layers, setLayers] = useState<RasterLayer[] | undefined>(undefined);
   const [rainViewerData, setRainViewerData] = useState<
     RainViewerDataType | undefined
   >(undefined);
@@ -106,21 +97,22 @@ export const MapBox = ({
       />
       <FullscreenControl />
       <NavigationControl />
-      {layers.map((val: RasterLayer) => {
-        return (
-          <Source
-            key={val.source}
-            id={val.source}
-            type='raster'
-            tiles={[
-              `https://tilecache.rainviewer.com${layers[0].source}/256/{z}/{x}/{y}/2/1_1.png`,
-            ]}
-            tileSize={256}
-          >
-            <Layer {...val} />
-          </Source>
-        );
-      })}
+      {layers &&
+        layers.map((val: RasterLayer) => {
+          return (
+            <Source
+              id={`${val.source}`}
+              key={`${val.source}`}
+              type='raster'
+              tiles={[
+                `https://tilecache.rainviewer.com${layers[0].source}/256/{z}/{x}/{y}/2/1_1.png`,
+              ]}
+              tileSize={256}
+            >
+              <Layer {...val} />
+            </Source>
+          );
+        })}
     </Map>
   );
 };

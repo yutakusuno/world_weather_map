@@ -56,6 +56,5 @@ npm run dev
 
 ## TODO
 
-- More selectable time zones
 - Locate the User's Position using Geolocation API
 - Responsive design on mobile screens

@@ -23,37 +23,15 @@ export const getMonthAbbreviation = (day: number): string => {
   );
 };
 
-export const timezones: Timezone[] = [
-  {
-    label: 'PST',
-    value: 'America/Los_Angeles',
-  },
-  {
-    label: 'CET',
-    value: 'Europe/Paris',
-  },
-  {
-    label: 'CST',
-    value: 'Asia/Shanghai',
-  },
-  {
-    label: 'EDT',
-    value: 'America/New_York',
-  },
-  {
-    label: 'GMT',
-    value: 'Europe/London',
-  },
-  {
-    label: 'JST',
-    value: 'Asia/Tokyo',
-  },
-  {
-    label: 'MSK',
-    value: 'Europe/Moscow',
-  },
-  {
-    label: 'UTC',
-    value: 'UTC',
-  },
-];
+export const defaultTimezone: Timezone = {
+  label: 'America/Vancouver',
+  value: 'America/Vancouver',
+};
+
+// NOTE: This needs lib to include ES2022 https://github.com/microsoft/TypeScript/issues/49231#issuecomment-1740901574
+export const timeZones: Timezone[] = Intl.supportedValuesOf('timeZone').map(
+  (timeZone: string) => ({
+    label: timeZone,
+    value: timeZone,
+  })
+);
