@@ -51,7 +51,7 @@ npm install
 Host the project locally:
 
 ```
-npm start
+npm run dev
 ```
 
 ## TODO
