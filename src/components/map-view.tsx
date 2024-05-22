@@ -6,6 +6,7 @@ import { getWeatherForecastData } from '../api/open-meteo';
 import { Point } from '../types/types';
 import { WeatherForecastDataType } from '../types/open-meteo';
 import { defaultTimezone } from '../utils/date';
+import { getTimeZoneWithLatLng } from '../api/wheretheiss';
 
 const initPoint: Point = {
   lat: 49.246292,
@@ -24,7 +25,7 @@ export const MapView = () => {
     tz: string | undefined
   ): Promise<void> => {
     let [currentLat, currentLng] = [point.lat, point.lng];
-    let currentTimezone = timezone;
+    let currentTimezone: string | undefined = undefined;
 
     if (currentLat === 0 && currentLng === 0) {
       currentLat = latLng.lat;
@@ -33,6 +34,14 @@ export const MapView = () => {
 
     if (tz) {
       currentTimezone = tz;
+    } else {
+      const retrievedTimeZone = await getTimeZoneWithLatLng({
+        lat: currentLat,
+        lng: currentLng,
+      });
+
+      // if timezone is not available, use the last selected timezone
+      currentTimezone = retrievedTimeZone || timezone;
     }
 
     const data = await getWeatherForecastData(

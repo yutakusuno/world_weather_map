@@ -15,12 +15,13 @@ import { Chart } from 'react-chartjs-2';
 
 import { TimezonePicker } from './timezone-picker';
 import { collectWeatherDataForChart } from '../utils/chart';
-import { HandleUpdateWeatherForecast } from '../types/types';
+import { HandleUpdateWeatherForecast, Timezone } from '../types/types';
 import {
   HourlyWeatherForecastDataType,
   WeatherDataForChartType,
   WeatherForecastDataType,
 } from '../types/open-meteo';
+import { defaultTimezone } from '../utils/date';
 
 ChartJS.register(
   LinearScale,
@@ -49,6 +50,8 @@ export const ChartView = ({
   const [weatherDataOnChart, setWeatherDataOnChart] = useState<
     HourlyWeatherForecastDataType | undefined
   >(undefined);
+  const [selectedTimezone, setSelectedTimezone] =
+    useState<Timezone>(defaultTimezone);
   const [selectedDateIdx, setSelectedDateIdx] = useState<number>(0);
 
   const handleDateSelectionClick = (idx: number) => {
@@ -76,6 +79,16 @@ export const ChartView = ({
         Object.values(weatherDataForChart['dailyWeatherData'])[0]
       );
       setSelectedDateIdx(0);
+
+      console.log(
+        "weatherDataForChart['currentWeatherData']['timeZone']",
+        weatherDataForChart['currentWeatherData']['timeZone']
+      );
+
+      setSelectedTimezone({
+        label: weatherDataForChart['currentWeatherData']['timeZone'],
+        value: weatherDataForChart['currentWeatherData']['timeZone'],
+      });
     }
   }, [weatherDataForChart]);
 
@@ -131,6 +144,8 @@ export const ChartView = ({
                 : ''}
             </div>
             <TimezonePicker
+              selectedTimezone={selectedTimezone}
+              setSelectedTimezone={setSelectedTimezone}
               handleUpdateWeatherForecast={handleUpdateWeatherForecast}
             />
           </div>

@@ -108,8 +108,11 @@ const getCurrentWeatherData = (
     ', ' +
     hourLabel; // 'Sun Jan 1, 12 AM'
 
+  console.log(weatherForecastData);
+
   return {
     time: monthDateHourLabel,
+    timeZone: weatherForecastData['timezone'],
     temperature: weatherForecastData['current_weather']['temperature'],
     weather: getDescriptionFromWeatherCode(
       weatherForecastData['current_weather']['weathercode']

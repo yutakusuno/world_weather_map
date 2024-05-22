@@ -1,19 +1,19 @@
-import { useState } from 'react';
 import Select from 'react-select';
 
 import { Timezone, HandleUpdateWeatherForecast } from '../types/types';
-import { defaultTimezone, timeZones } from '../utils/date';
+import { timeZones } from '../utils/date';
 
 type TimezonePickerProps = {
+  selectedTimezone: Timezone;
+  setSelectedTimezone: React.Dispatch<React.SetStateAction<Timezone>>;
   handleUpdateWeatherForecast: HandleUpdateWeatherForecast;
 };
 
 export const TimezonePicker = ({
   handleUpdateWeatherForecast,
+  selectedTimezone,
+  setSelectedTimezone,
 }: TimezonePickerProps) => {
-  const [selectedTimezone, setSelectedTimezone] =
-    useState<Timezone>(defaultTimezone);
-
   return (
     <div className='timezone-picker'>
       <div>Time zone:</div>
@@ -40,6 +40,7 @@ export const TimezonePicker = ({
             color: state.isFocused || state.isSelected ? '#0F172A' : '#ffffff',
             backgroundColor:
               state.isFocused || state.isSelected ? '#ffffff' : '#0F172A',
+            fontSize: 'small',
           }),
           control: (defaultStyles) => ({
             ...defaultStyles,
@@ -49,6 +50,7 @@ export const TimezonePicker = ({
             boxShadow: 'none',
             cursor: 'pointer',
             opacity: '0.9',
+            fontSize: 'small',
           }),
           menu: (defaultStyles) => ({
             ...defaultStyles,

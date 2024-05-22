@@ -81,7 +81,7 @@ export const MapBox = ({
       initialViewState={{
         latitude: latLng.lat,
         longitude: latLng.lng,
-        zoom: 9,
+        zoom: 8,
       }}
       style={{ width: '100vw', height: '100vh' }}
       mapStyle='mapbox://styles/mapbox/streets-v12'

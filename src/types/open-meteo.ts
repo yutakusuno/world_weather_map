@@ -45,6 +45,7 @@ export type HourlyWeatherForecastDataType = {
 
 export type CurrentWeatherDataType = {
   time: string;
+  timeZone: string;
   temperature: number;
   weather: string;
 };
