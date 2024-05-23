@@ -40,7 +40,7 @@ touch .env.local
 Set your Mapbox access token in `.env.local`:
 
 ```.env.local
-REACT_APP_MAPBOX_ACCESS_TOKEN=xxxyyyzzz
+VITE_MAPBOX_ACCESS_TOKEN=xxxyyyzzz
 ```
 
 Install project dependencies:
