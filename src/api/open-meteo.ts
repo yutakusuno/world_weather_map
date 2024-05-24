@@ -20,8 +20,19 @@ export const getWeatherForecastData = async (
 
   try {
     const response = await fetch(endpointUrl);
+
+    if (response.status !== 200) {
+      throw new Error(
+        `status code: ${response.status}\npoint: ${point.lat},${point.lng}\ntimezone: ${timezone}`
+      );
+    }
+
     return await response.json();
   } catch (error) {
-    console.error(error);
+    let errorMessage = `Please try the other location. Failed to fetch weather data.`;
+    if (error instanceof Error) {
+      errorMessage += `\n${error.message}`;
+    }
+    alert(errorMessage);
   }
 };

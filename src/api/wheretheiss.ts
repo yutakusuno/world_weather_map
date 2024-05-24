@@ -18,6 +18,13 @@ const getCoordinatesDetail = async (
     const response = await fetch(
       `https://api.wheretheiss.at/v1/coordinates/${point.lat},${point.lng}`
     );
+
+    if (response.status !== 200) {
+      throw new Error(
+        `Failed to fetch coordinates data. status code :${response.status}`
+      );
+    }
+
     return await response.json();
   } catch (error) {
     console.error(error);
