@@ -49,6 +49,10 @@ export const MapView = () => {
       currentTimezone
     );
 
+    if (!data) {
+      return;
+    }
+
     setWeatherForecastData(data);
     setLatLng({ lat: currentLat, lng: currentLng });
     setTimezone(currentTimezone);
